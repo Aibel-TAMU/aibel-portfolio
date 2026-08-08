@@ -27,7 +27,7 @@ function renderProjects() {
       >
         <div class="carousel-track w-full h-full relative">
           ${project.images.map((img, i) => `
-            <img src="${img.src}" alt="${img.alt}" class="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-500 ease-in-out ${i === 0 ? 'active opacity-100' : ''}" onerror="this.src='https://via.placeholder.com/640x360/11151a/262d35?text=${encodeURIComponent(img.alt)}'">
+            <img src="${img.src}" alt="${img.alt}" class="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-500 ease-in-out ${i === 0 ? 'active opacity-100' : ''}" onerror="this.src='https://via.placeholder.com/400x225/11151a/262d35?text=Hardware+Build'"
           `).join('')}
         </div>
         
