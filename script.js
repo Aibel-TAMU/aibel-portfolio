@@ -27,7 +27,7 @@ function renderProjects() {
       >
         <div class="carousel-track w-full h-full relative">
           ${project.images.map((img, i) => `
-            <img src="${img.src}" alt="${img.alt}" class="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-500 ease-in-out ${i === 0 ? 'active opacity-100' : ''}" onerror="this.src='https://via.placeholder.com/400x225/11151a/262d35?text=Hardware+Build'"
+            <img src="${img.src}" alt="${img.alt}" class="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-500 ease-in-out ${i === 0 ? 'active opacity-100' : ''}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'225\' viewBox=\'0 0 400 225\'><rect width=\'100%\' height=\'100%\' fill=\'%2311151a\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23a3b1c2\' font-family=\'monospace\' font-size=\'14\'>Hardware Build Image</text></svg>'"
           `).join('')}
         </div>
         
@@ -227,7 +227,7 @@ function renderDetailedProjectSections() {
                 alt="${img.alt}" 
                 data-alt="${img.alt}"
                 class="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-500 ease-in-out ${i === 0 ? 'active opacity-100' : ''}" 
-                onerror="this.src='https://via.placeholder.com/400x225/11151a/262d35?text=Hardware+Build'"
+                onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'225\' viewBox=\'0 0 400 225\'><rect width=\'100%\' height=\'100%\' fill=\'%2311151a\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23a3b1c2\' font-family=\'monospace\' font-size=\'14\'>Hardware Build Image</text></svg>'"
               >
             `).join('')}
           </div>
