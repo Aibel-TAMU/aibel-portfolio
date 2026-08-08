@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aibel Jomon | Engineering Portfolio | Systems, Controls & Test</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Professional Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind Theme Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'aggie-maroon': '#500000',       /* Primary Texas A&M Maroon */
+            'aggie-maroon-light': '#732f2f', /* Lighter Maroon for hover/accents */
+            'eng-dark': '#202020',           /* Dark Charcoal Background */
+            'eng-panel': '#d6d3c4',          /* Elevated Card/Panel Background */
+            'eng-border': '#707070',         /* Divider and Border color */
+            'eng-text': '#3e3e3e',           /* Main body text */
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+            mono: ['Roboto Mono', 'ui-monospace', 'SFMono-Regular'],
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-eng-dark text-eng-text font-sans antialiased leading-relaxed tracking-tight selection:bg-aggie-maroon selection:text-white">
+
+  <!-- TOP NAVBAR -->
+  <nav class="sticky top-0 z-50 bg-eng-dark/95 border-b border-eng-border backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-6 py-3.5 flex items-center justify-between">
+      <a href="#" class="font-mono text-base font-bold tracking-tight text-white group">
+        <span class="text-aggie-maroon-light">[</span>
+        <span class="group-hover:text-aggie-maroon-light transition-colors">AIBEL_JOMON.ENGINEER</span>
+        <span class="text-aggie-maroon-light">]</span>
+      </a>
+      <div class="flex items-center gap-6 font-mono text-xs text-white">
+        <a href="#about" class="group transition hover:text-white text-eng-text"><span class="text-aggie-maroon-light opacity-70 group-hover:opacity-100 transition">./</span>about</a>
+        <a href="#projects" class="group transition hover:text-white text-eng-text"><span class="text-aggie-maroon-light opacity-70 group-hover:opacity-100 transition">./</span>showcase</a>
+        <a href="#detailed-projects" class="group transition hover:text-white text-eng-text"><span class="text-aggie-maroon-light opacity-70 group-hover:opacity-100 transition">./</span>deep-dives</a>
+        <a href="#contact" class="px-4 py-2 rounded bg-aggie-maroon text-white font-semibold transition hover:bg-aggie-maroon-light border border-aggie-maroon-light/30">INITIATE CONTACT</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <header id="about" class="relative overflow-hidden border-b border-eng-border bg-eng-dark w-full max-w-full">
+    <!-- Subtle Gradient Background Element -->
+    <div class="absolute inset-0 pointer-events-none opacity-30">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[500px] bg-[radial-gradient(ellipse_at_center,_rgba(80,0,0,0.4)_0%,_rgba(13,15,18,0)_70%)]"></div>
+    </div>
+    
+    <div class="w-full px-4 sm:px-8 md:px-12 py-12 relative z-10 flex flex-col items-center text-center">
+      
+      <!-- ONE-LINER KICKER BADGE -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-aggie-maroon/30 border border-aggie-maroon-light/60 text-white font-mono text-xs font-semibold mb-5 backdrop-blur-sm">
+        <span class="w-2 h-2 rounded-full bg-aggie-maroon-light animate-pulse"></span>
+        MECHANICAL ENGINEERING @ TEXAS A&M UNIVERSITY · EE MINOR
+      </div>
+
+      <!-- SINGLE-LINE HEADLINE -->
+      <h1 class="text-[clamp(1.1rem,2.8vw,3rem)] font-extrabold tracking-tighter text-white leading-snug pb-2 mb-4 w-full text-center whitespace-nowrap">
+        Full-Stack Systems Integration <span class="text-white/40">|</span> <span class="underline decoration-aggie-maroon-light decoration-4 underline-offset-[12px]">Dynamics & Controls</span>
+      </h1>
+
+      <!-- PROBLEM-SOLVER BIO -->
+      <p class="text-base md:text-lg text-eng-text max-w-3xl mb-8 leading-relaxed">
+        Give me an engineering problem, and I will build the solution from the ground up. I bridge physical mechanics with embedded electronics and firmware - taking complex builds from structural CAD and FEA through custom embedded system design down to real-world validation. Currently engineering hardware integration and real-time data aquisition (DAQ) systems for Texas A&M's <strong class="text-white">SAE Baja</strong> and <strong class="text-white">Naval Design</strong> competition teams.
+      </p>
+
+      <!-- CTA & TECH STACK ROW -->
+      <div class="flex flex-wrap items-center justify-center gap-6 font-mono text-xs">
+        <a href="#projects" class="px-6 py-3 rounded bg-white text-eng-dark font-bold hover:bg-aggie-maroon hover:text-white transition-colors shadow-lg">EXPLORE SHOWCASE BUILDS</a>
+        
+        <div class="flex flex-wrap items-center justify-center gap-3 pl-0 sm:pl-6 sm:border-l border-eng-border text-eng-text">
+          <span class="font-bold text-white">TECH STACK:</span>
+          <span class="px-3 py-1 bg-eng-panel rounded border border-eng-border">CAN Bus / STM32</span>
+          <span class="px-3 py-1 bg-eng-panel rounded border border-eng-border">SOLIDWORKS / ANSYS</span>
+          <span class="px-3 py-1 bg-eng-panel rounded border border-eng-border">Embedded C / PYTHON</span>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- 3D FLUID SHOWCASE CAROUSEL SECTION -->
+  <section id="projects" class="bg-eng-panel py-12 overflow-hidden select-none border-b border-eng-border">
+    <div class="w-full px-4 sm:px-8 relative">
+      
+      <!-- SECTION HEADER -->
+      <div class="max-w-xl mb-4 text-center mx-auto">
+        <span class="font-mono text-xs font-semibold text-white bg-aggie-maroon/60 px-3.5 py-1 rounded-full border border-aggie-maroon-light/50 tracking-widest uppercase shadow-md">SHOWCASE</span>
+        <h2 class="text-3xl font-extrabold tracking-tighter text-white leading-tight mt-3">Featured Engineering Builds</h2>
+      </div>
+
+      <!-- FOCUS INDICATOR BADGE -->
+      <div class="flex items-center justify-center mb-2 font-mono text-xs">
+        <span class="text-aggie-maroon-light bg-eng-dark px-3.5 py-1.5 rounded-full border border-eng-border tracking-wider font-bold shadow-inner" id="project-count-indicator">
+          FOCUSING BUILD 1 OF 5
+        </span>
+      </div>
+
+      <!-- 3D STAGE & NAVIGATION CONTAINER -->
+      <div class="relative w-full max-w-6xl mx-auto h-[560px] flex items-center justify-center perspective-[1000px] overflow-visible">
+        
+        <!-- LEFT OVERLAY CONTROL BUTTON -->
+        <button id="prev-project-btn" class="absolute left-2 sm:left-6 z-40 p-4 rounded-full bg-eng-dark/80 border border-eng-border/80 text-white hover:bg-aggie-maroon hover:border-aggie-maroon-light transition-all duration-300 shadow-2xl backdrop-blur-md group hover:scale-110 active:scale-95" aria-label="Previous Build">
+          <svg class="w-6 h-6 transform group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+
+        <!-- 3D CARD CAROUSEL RING -->
+        <div id="projects-container" class="relative w-full h-full flex items-center justify-center"></div>
+
+        <!-- RIGHT OVERLAY CONTROL BUTTON -->
+        <button id="next-project-btn" class="absolute right-2 sm:right-6 z-40 p-4 rounded-full bg-eng-dark/80 border border-eng-border/80 text-white hover:bg-aggie-maroon hover:border-aggie-maroon-light transition-all duration-300 shadow-2xl backdrop-blur-md group hover:scale-110 active:scale-95" aria-label="Next Build">
+          <svg class="w-6 h-6 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+        </button>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DETAILED PROJECT TECHNICAL INDEX -->
+  <section id="detailed-projects" class="bg-eng-dark py-16">
+    <div class="max-w-5xl mx-auto px-6">
+      
+      <!-- SECTION HEADER -->
+      <div class="mb-12 border-b border-eng-border pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="font-mono text-xs font-semibold text-aggie-maroon-light uppercase tracking-widest">TECHNICAL DEEP DIVES</span>
+          <h2 class="text-3xl font-extrabold text-white mt-1">Full Project Specifications & Log</h2>
+        </div>
+        <p class="text-xs font-mono text-eng-text/70">COMPREHENSIVE HARDWARE & FIRMWARE BREAKDOWNS</p>
+      </div>
+
+      <!-- DETAILED PROJECT LIST (CONTAINER POPULATED VIA SCRIPT.JS) -->
+      <div id="detailed-projects-container" class="space-y-12"></div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER / EXPANDABLE CONTACT & RESUME SECTION -->
+<!-- FOOTER / AUTOMATICALLY EXPANDABLE DOSSIER SECTION -->
+  <footer id="contact" class="bg-eng-panel border-t border-eng-border transition-all duration-700 ease-in-out group overflow-hidden relative">
+    <div class="max-w-6xl mx-auto px-6 py-10">
+      
+      <!-- PROMINENT HIGH-VISIBILITY TRIGGER BAR -->
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 cursor-pointer p-6 rounded-2xl bg-eng-dark border-2 border-aggie-maroon-light/40 hover:border-aggie-maroon-light transition-all duration-300 shadow-xl group/bar" id="contact-trigger">
+        <div>
+          <!-- HIGH-VISIBILITY PULSING BADGE -->
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-aggie-maroon/50 border border-aggie-maroon-light text-white font-mono text-xs font-bold uppercase mb-2 shadow-sm animate-pulse">
+            <span class="w-2 h-2 rounded-full bg-aggie-maroon-light"></span>
+            RESUME & CONTACT HUB
+          </div>
+          <h2 class="text-2xl md:text-3xl font-extrabold tracking-tighter text-white group-hover/bar:text-aggie-maroon-light transition-colors">Let’s Initialize a Collaboration.</h2>
+          <p class="text-sm text-eng-text mt-1 max-w-lg">Open for specialized hardware engineering, vehicle dynamics, test integration, and control system roles.</p>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row items-center gap-4 font-mono text-xs w-full md:w-auto">
+          <!-- VISUAL ACTION TOGGLE BUTTON -->
+          <button id="dossier-toggle-btn" class="w-full sm:w-auto px-6 py-3 rounded bg-aggie-maroon hover:bg-aggie-maroon-light text-white font-bold transition-all border border-aggie-maroon-light/60 shadow-lg flex items-center justify-center gap-2">
+            <span id="dossier-btn-text">CLICK HERE</span>
+            <span class="text-sm font-extrabold" id="dossier-btn-icon">[+]</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- EXPANDABLE DOSSIER (Reveals on Hover, Scroll-to-Bottom, or Click) -->
+      <div id="contact-expandable" class="max-h-0 opacity-0 transition-all duration-700 ease-in-out overflow-hidden pt-0 mt-0 border-t border-transparent">
+        
+        <div class="pt-8 mt-8 border-t border-eng-border grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <!-- RESUME EMBED PREVIEW (2 Columns) -->
+          <div class="lg:col-span-2 bg-eng-dark rounded-xl border border-eng-border p-4 flex flex-col h-[520px]">
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-eng-border font-mono text-xs">
+              <span class="text-white font-bold">AIBEL_JOMON_RESUME.PDF</span>
+              <a href="assets/resume.pdf" download class="text-aggie-maroon-light hover:text-white transition-colors underline">DOWNLOAD_RAW_PDF [ ]</a>
+            </div>
+            <!-- Embedded PDF Viewer -->
+            <iframe src="assets/resume.pdf" class="w-full h-full rounded border border-eng-border/50 bg-white/5" title="Aibel Jomon Resume"></iframe>
+          </div>
+
+          <!-- RELEVANT DOCUMENTS & DISCLOSURES (1 Column) -->
+          <div class="flex flex-col justify-between space-y-4 font-mono text-xs">
+            <div class="space-y-3">
+              <h4 class="text-white font-bold uppercase tracking-wider text-sm">Engineering Contact Hub</h4>
+              <p class="text-eng-text leading-relaxed font-sans text-xs">Access technical documentation, CAD schematics, and academic transcripts for verified recruiters.</p>
+              
+              <div class="space-y-2 pt-2">
+                <a href="assets/resume.pdf" download class="flex items-center justify-between p-3 rounded bg-eng-dark border border-eng-border text-white hover:border-aggie-maroon-light transition-colors">
+                  <span>📄 Formal Engineering Resume</span>
+                  <span class="text-aggie-maroon-light">PDF</span>
+                </a>
+                <a href="assets/design-portfolio.pdf" download class="flex items-center justify-between p-3 rounded bg-eng-dark border border-eng-border text-white hover:border-aggie-maroon-light transition-colors">
+                  <span>📐 Design Portfolio & CAD Logs</span>
+                  <span class="text-aggie-maroon-light">PDF</span>
+                </a>
+                <a href="assets/transcript-summary.pdf" download class="flex items-center justify-between p-3 rounded bg-eng-dark border border-eng-border text-white hover:border-aggie-maroon-light transition-colors">
+                  <span>📊 TAMU Academic Summary</span>
+                  <span class="text-aggie-maroon-light">PDF</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="p-4 bg-eng-dark rounded border border-eng-border/60">
+              <span class="text-aggie-maroon-light font-bold">STATUS:</span>
+              <span class="text-white"> Actively seeking Spring/Summer 2027 Co-Op & Internship Opportunities.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- SCRIPT FILES (REQUIRED TO POPULATE DOM & CAROUSELS) -->
+  <script src="projects.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
