@@ -102,7 +102,7 @@ function initStarfieldEngine() {
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, width, height);
 
-    // Stars
+    // Twinkling stars
     for (let i = 0; i < stars.length; i++) {
       const s = stars[i];
       s.twinklePhase += s.twinkleSpeed;
@@ -114,7 +114,7 @@ function initStarfieldEngine() {
       ctx.fill();
     }
 
-    // Drifting Sparks
+    // Drifting sparks
     for (let i = 0; i < sparks.length; i++) {
       const sp = sparks[i];
 
@@ -149,7 +149,7 @@ function initStarfieldEngine() {
       ctx.shadowBlur = 0;
     }
 
-    // Shooting Stars
+    // Shooting stars
     spawnShootingStar();
     for (let i = shootingStars.length - 1; i >= 0; i--) {
       const ss = shootingStars[i];
@@ -209,11 +209,44 @@ function initScrollProgress() {
 window.handleImgError = function(img) {
   img.onerror = null;
   img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><rect width="100%" height="100%" fill="#080b11"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#475569" font-family="monospace" font-size="16">TECHNICAL SPECIFICATION // SCHEMATIC PENDING</text></svg>'
+    '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><rect width="100%" height="100%" fill="#07090e"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#475569" font-family="monospace" font-size="16">CAD SPECIFICATION SCHEMATIC // RECORD SYNCED</text></svg>'
   );
 };
 
-// 4. PROJECT CATEGORY FILTER & RIVER GENERATION
+// 4. INLINE PROJECT SLIDE SWITCHER
+window.switchProjectCardSlide = function(pIdx, slideIdx) {
+  const source = window.projectsData;
+  if (!Array.isArray(source) || !source[pIdx]) return;
+  const project = source[pIdx];
+  if (!project.images || !project.images[slideIdx]) return;
+
+  const mainImg = document.getElementById('card-img-' + project.id);
+  const captionEl = document.getElementById('card-caption-' + project.id);
+  const counterEl = document.getElementById('card-counter-' + project.id);
+
+  if (mainImg) {
+    mainImg.src = project.images[slideIdx].src;
+    mainImg.alt = project.images[slideIdx].alt;
+  }
+  if (captionEl) {
+    captionEl.textContent = project.images[slideIdx].alt || 'Blueprint Spec';
+  }
+  if (counterEl) {
+    counterEl.textContent = 'SLIDE ' + (slideIdx + 1) + ' OF ' + project.images.length;
+  }
+
+  // Update active border highlight across thumbnail ribbon
+  const thumbs = document.querySelectorAll('.card-thumb-' + project.id);
+  thumbs.forEach(function(btn, idx) {
+    if (idx === slideIdx) {
+      btn.className = 'card-thumb-' + project.id + ' w-12 h-9 border shrink-0 overflow-hidden bg-black transition-all border-cold-pure ring-1 ring-cold-pure scale-105';
+    } else {
+      btn.className = 'card-thumb-' + project.id + ' w-12 h-9 border shrink-0 overflow-hidden bg-black transition-all border-cold-border opacity-50 hover:opacity-100';
+    }
+  });
+};
+
+// 5. PROJECT CATEGORY FILTER & RIVER GENERATION
 window.setProjectFilter = function(category) {
   activeProjectCategory = category;
   document.querySelectorAll('.project-filter-btn').forEach(function(btn) {
@@ -240,96 +273,129 @@ function renderContinuousProjectsFeed() {
     const project = filtered[pIdx];
     const realIdx = source.indexOf(project);
     const mainImg = (project.images && project.images[0]) ? project.images[0] : { src: '', alt: 'CAD Schematic' };
-    const secondaryImages = (project.images && project.images.length > 1) ? project.images.slice(1, 5) : [];
+    const allImages = project.images || [];
     const tags = Array.isArray(project.tags) ? project.tags : [];
     const executionHighlights = Array.isArray(project.executionHighlights) ? project.executionHighlights : [];
     const specs = project.engineeringSpecs ? Object.entries(project.engineeringSpecs) : [];
 
     let tagsHtml = '';
     for (let t = 0; t < tags.length; t++) {
-      tagsHtml += '<span class="px-3 py-1 bg-cold-gunmetal border border-cold-border text-cold-slate">' + tags[t] + '</span>';
+      tagsHtml += '<span class="px-2.5 py-1 bg-cold-titanium border border-cold-border text-cold-slate font-mono text-[11px]">' + tags[t] + '</span>';
     }
 
     let highlightsHtml = '';
     for (let h = 0; h < executionHighlights.length; h++) {
-      highlightsHtml += '<li class="flex items-start gap-3 bg-cold-gunmetal/70 p-3 border border-cold-border/70 backdrop-blur-sm">' +
+      highlightsHtml += '<li class="flex items-start gap-2.5 p-3 bg-cold-gunmetal border border-cold-border/60">' +
         '<span class="text-cold-safety font-mono font-bold mt-0.5">›</span>' +
-        '<span>' + executionHighlights[h] + '</span>' +
+        '<span class="text-xs sm:text-sm text-cold-slate font-sans leading-relaxed">' + executionHighlights[h] + '</span>' +
         '</li>';
     }
 
     let specsHtml = '';
     for (let s = 0; s < specs.length; s++) {
-      specsHtml += '<div class="flex justify-between py-1.5 border-b border-cold-border/40">' +
-        '<span class="text-cold-subtle">' + specs[s][0] + ':</span>' +
-        '<span class="text-cold-pure font-semibold text-right">' + specs[s][1] + '</span>' +
+      specsHtml += '<div class="flex justify-between items-center py-2 border-b border-cold-border/40 font-mono text-xs">' +
+        '<span class="text-cold-subtle text-[11px] uppercase">' + specs[s][0] + ':</span>' +
+        '<span class="text-cold-pure font-semibold text-right text-[11px]">' + specs[s][1] + '</span>' +
         '</div>';
     }
 
-    let secondaryHtml = '';
-    if (secondaryImages.length > 0) {
-      let slidesHtml = '';
-      for (let sIdx = 0; sIdx < secondaryImages.length; sIdx++) {
-        const img = secondaryImages[sIdx];
-        slidesHtml += '<div class="image-zoom-box aspect-[16/10] bg-cold-gunmetal border border-cold-border cursor-pointer group relative" onclick="window.openInspectorModal(' + realIdx + ', ' + (sIdx + 1) + ')">' +
-          '<img src="' + img.src + '" alt="' + (img.alt || 'Drawing Slide') + '" class="w-full h-full object-contain p-4" loading="lazy" onerror="window.handleImgError(this)">' +
-          '<div class="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black via-black/80 to-transparent flex items-center justify-between font-mono text-[11px] text-cold-pure opacity-90 group-hover:opacity-100 transition-opacity">' +
-          '<span class="truncate pr-2">' + (img.alt || 'Drawing Slide') + '</span>' +
-          '<i data-lucide="zoom-in" class="w-4 h-4 text-cold-safety shrink-0"></i>' +
+    let thumbnailRibbonHtml = '';
+    for (let imgIdx = 0; imgIdx < allImages.length; imgIdx++) {
+      const isSelected = imgIdx === 0;
+      const borderClass = isSelected
+        ? 'border-cold-pure ring-1 ring-cold-pure scale-105'
+        : 'border-cold-border opacity-50 hover:opacity-100';
+
+      thumbnailRibbonHtml += '<button onclick="window.switchProjectCardSlide(' + realIdx + ', ' + imgIdx + ')" class="card-thumb-' + project.id + ' w-12 h-9 border shrink-0 overflow-hidden bg-black transition-all ' + borderClass + '" title="' + (allImages[imgIdx].alt || 'Slide') + '">' +
+        '<img src="' + allImages[imgIdx].src + '" alt="' + (allImages[imgIdx].alt || 'Thumbnail') + '" class="w-full h-full object-contain" onerror="window.handleImgError(this)">' +
+        '</button>';
+    }
+
+    html += '<article class="pop-in bg-cold-gunmetal/70 border border-cold-border p-6 sm:p-10 shadow-[0_0_30px_rgba(0,0,0,0.8)] backdrop-blur-md relative" id="unit-' + project.id + '">' +
+      
+      // Card Header
+      '<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 mb-8 border-b border-cold-border">' +
+        '<div>' +
+          '<div class="flex items-center gap-3 font-mono text-xs text-cold-subtle mb-2">' +
+            '<span class="px-2 py-0.5 bg-cold-titanium border border-cold-border text-cold-safety font-bold text-xs tracking-wider">UNIT 0' + (pIdx + 1) + '</span>' +
+            '<span>//</span>' +
+            '<span class="uppercase tracking-wider">' + (project.team || 'TAMU ENGINEERING') + '</span>' +
+            '<span>//</span>' +
+            '<span class="text-cold-slate">' + (project.timeline || '2026') + '</span>' +
           '</div>' +
-          '</div>';
-      }
-      secondaryHtml = '<div class="pt-4">' +
-        '<div class="flex items-center justify-between mb-4 font-mono text-xs text-cold-subtle">' +
-        '<span>SECONDARY CAD BLUEPRINTS &amp; FEA SLIDES</span>' +
-        '<span>CLICK TO EXPAND HIGH-RES VIEW</span>' +
+          '<h3 class="text-3xl sm:text-5xl font-display font-extrabold text-cold-pure uppercase tracking-tight">' +
+            (project.title || 'Subsystem Build') +
+          '</h3>' +
         '</div>' +
-        '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' + slidesHtml + '</div>' +
-        '</div>';
-    }
 
-    html += '<article class="pop-in space-y-8" id="unit-' + project.id + '">' +
-      '<div class="border-b border-cold-border pb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">' +
-      '<div>' +
-      '<div class="flex items-center gap-3 font-mono text-xs text-cold-subtle mb-2">' +
-      '<span class="text-cold-safety font-bold text-sm tracking-wider">UNIT 0' + (pIdx + 1) + '</span>' +
-      '<span>//</span>' +
-      '<span class="uppercase">' + (project.team || 'TAMU ENGINEERING') + '</span>' +
-      '<span>//</span>' +
-      '<span class="text-cold-slate">' + (project.timeline || '2026') + '</span>' +
+        '<div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0">' +
+          '<span class="px-3 py-1 bg-cold-titanium border border-cold-border text-cold-ice font-mono text-xs font-bold">' +
+            (project.statusBadge || 'FIELD VALIDATED') +
+          '</span>' +
+          '<div class="flex flex-wrap gap-1.5">' + tagsHtml + '</div>' +
+        '</div>' +
       '</div>' +
-      '<h3 class="text-4xl sm:text-6xl font-display font-extrabold text-cold-pure uppercase tracking-tight leading-[0.95]">' + (project.title || 'Subsystem Build') + '</h3>' +
+
+      // Card Body Grid: Left = Massive Interactive Viewport, Right = Technical Dossier
+      '<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">' +
+        
+        // Massive Viewport Stage (7 Cols)
+        '<div class="lg:col-span-7 space-y-3">' +
+          '<div class="image-zoom-box w-full aspect-[16/10] bg-black border border-cold-border cursor-pointer group relative overflow-hidden" onclick="window.openInspectorModal(' + realIdx + ', 0)">' +
+            '<img id="card-img-' + project.id + '" src="' + mainImg.src + '" alt="' + (mainImg.alt || 'CAD Hero Model') + '" class="w-full h-full object-contain p-4 sm:p-6" onerror="window.handleImgError(this)">' +
+            
+            '<div class="absolute top-3 left-3 px-2.5 py-1 bg-black/90 border border-cold-border text-cold-ice font-mono text-[10px] font-bold flex items-center gap-1.5">' +
+              '<span class="w-2 h-2 rounded-full bg-cold-ice animate-pulse"></span>' +
+              '<span id="card-counter-' + project.id + '">SLIDE 1 OF ' + allImages.length + '</span>' +
+            '</div>' +
+
+            '<div class="absolute top-3 right-3 px-2.5 py-1 bg-black/90 border border-cold-border text-cold-pure font-mono text-[10px] font-bold flex items-center gap-1.5">' +
+              '<i data-lucide="maximize-2" class="w-3.5 h-3.5 text-cold-safety"></i>' +
+              '<span>FULLSCREEN</span>' +
+            '</div>' +
+
+            '<div class="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black via-black/80 to-transparent flex items-center justify-between font-mono text-xs text-cold-pure">' +
+              '<span id="card-caption-' + project.id + '" class="truncate pr-4 text-[11px] text-cold-slate">' + (mainImg.alt || 'CAD Model View') + '</span>' +
+              '<span class="text-cold-subtle text-[10px] shrink-0 font-bold">CLICK TO INSPECT</span>' +
+            '</div>' +
+          '</div>' +
+
+          // Interactive Thumbnail Ribbon on the Card
+          '<div class="flex items-center gap-2 overflow-x-auto p-2 bg-black border border-cold-border">' +
+            '<span class="font-mono text-[9px] text-cold-subtle uppercase tracking-wider shrink-0 mr-1">SLIDES:</span>' +
+            thumbnailRibbonHtml +
+          '</div>' +
+        '</div>' +
+
+        // Engineering Dossier & Spec Parameters (5 Cols)
+        '<div class="lg:col-span-5 space-y-6">' +
+          
+          '<div>' +
+            '<span class="font-mono text-[10px] text-cold-safety font-bold uppercase tracking-wider block mb-1.5">SUBSYSTEM OBJECTIVE</span>' +
+            '<p class="text-sm sm:text-base text-cold-slate font-sans leading-relaxed">' + (project.summary || '') + '</p>' +
+          '</div>' +
+
+          '<div class="space-y-2">' +
+            '<span class="font-mono text-[10px] text-cold-safety font-bold uppercase tracking-wider block">KEY EXECUTION &amp; ANALYSIS</span>' +
+            '<ul class="space-y-2">' + highlightsHtml + '</ul>' +
+          '</div>' +
+
+          '<div class="p-4 bg-black border border-cold-border space-y-1">' +
+            '<div class="flex items-center justify-between border-b border-cold-border pb-2 mb-1 font-mono text-xs">' +
+              '<span class="text-cold-pure font-bold flex items-center gap-1.5">' +
+                '<i data-lucide="cpu" class="w-3.5 h-3.5 text-cold-safety"></i>' +
+                '<span>ENGINEERING BENCHMARKS</span>' +
+              '</span>' +
+              '<span class="text-[9px] text-emerald-400 font-bold">AUTHENTICATED</span>' +
+            '</div>' +
+            specsHtml +
+          '</div>' +
+
+        '</div>' +
+
       '</div>' +
-      '<div class="flex flex-wrap gap-2 font-mono text-xs shrink-0">' + tagsHtml + '</div>' +
-      '</div>' +
-      '<div class="image-zoom-box w-full aspect-[16/9] sm:aspect-[21/9] border border-cold-border cursor-pointer group" onclick="window.openInspectorModal(' + realIdx + ', 0)">' +
-      '<img src="' + mainImg.src + '" alt="' + (mainImg.alt || 'Hero CAD View') + '" class="w-full h-full object-contain p-4 sm:p-8" onerror="window.handleImgError(this)">' +
-      '<div class="absolute top-4 right-4 px-3 py-1 bg-black/90 border border-cold-border text-cold-pure font-mono text-xs font-bold flex items-center gap-2">' +
-      '<span class="w-2 h-2 rounded-full bg-cold-safety"></span>' +
-      '<span>HERO CAD VIEW</span>' +
-      '</div>' +
-      '<div class="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black via-black/80 to-transparent flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity font-mono text-xs text-cold-pure">' +
-      '<span class="flex items-center gap-2"><i data-lucide="maximize-2" class="w-4 h-4 text-cold-safety"></i> CLICK FOR FULLSCREEN CAD BLUEPRINT INSPECTION</span>' +
-      '<span class="text-cold-subtle">TOTAL SLIDES: ' + (project.images ? project.images.length : 0) + '</span>' +
-      '</div>' +
-      '</div>' +
-      '<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-2">' +
-      '<div class="lg:col-span-7 space-y-6">' +
-      '<p class="text-base sm:text-lg text-cold-slate leading-relaxed font-sans">' + (project.summary || '') + '</p>' +
-      '<div class="space-y-2">' +
-      '<span class="text-[11px] font-mono text-cold-subtle uppercase tracking-wider block">Key Engineering Execution:</span>' +
-      '<ul class="space-y-2 font-sans text-xs sm:text-sm text-cold-slate">' + highlightsHtml + '</ul>' +
-      '</div>' +
-      '</div>' +
-      '<div class="lg:col-span-5 bg-cold-gunmetal/90 border border-cold-border p-5 space-y-3 font-mono text-xs backdrop-blur-md">' +
-      '<div class="text-cold-pure font-bold border-b border-cold-border pb-2 flex justify-between items-center text-xs">' +
-      '<span>HARDWARE SPECIFICATIONS</span>' +
-      '<span class="text-cold-safety text-[10px]">FIELD VERIFIED</span>' +
-      '</div>' + specsHtml +
-      '</div>' +
-      '</div>' +
-      secondaryHtml +
-      '</article>';
+
+    '</article>';
   }
 
   container.innerHTML = html;
@@ -337,7 +403,7 @@ function renderContinuousProjectsFeed() {
   initScrollAnimations();
 }
 
-// 5. SCROLL POP-IN & NUMBER COUNTER ANIMATIONS
+// 6. SCROLL POP-IN & NUMBER COUNTERS
 function initScrollAnimations() {
   const elements = document.querySelectorAll('.pop-in');
 
@@ -386,29 +452,24 @@ function animateCounter(el) {
   requestAnimationFrame(update);
 }
 
-// 6. MOTEC CHASSIS TELEMETRY ENGINE
+// 7. G-G FRICTION CIRCLE ENGINE (CHASSIS TELEMETRY REPLAY)
 function getTelemetrySample(t) {
-  const speed = Math.min(38.0, 38.0 * (1 - Math.exp(-t / 3.4)));
-  const priRpm = t < 0.2 ? 1800 : 3650 + 150 * Math.sin(t * 1.8) + (Math.sin(t * 12.0) * 40);
-  const secRpm = (speed / 38.0) * 3100 + 120;
-  const ratio = (secRpm / priRpm).toFixed(2);
-
   let longG = 0;
   if (t < 2.5) {
-    longG = 0.85 * (1 - t / 3.0);
+    longG = 0.85 * (1 - t / 3.0); // Acceleration
   } else if (t > 10.5) {
-    longG = -1.1;
+    longG = -1.15; // Hard braking
   } else {
     longG = -0.15 * Math.sin(t * 2.5);
   }
 
   let latG = 0;
   if (t >= 3.0 && t <= 10.5) {
-    latG = 1.35 * Math.sin((t - 3.0) * 1.45);
+    latG = 1.35 * Math.sin((t - 3.0) * 1.45); // Slalom lateral loading
   }
 
   const totalG = Math.sqrt(latG * latG + longG * longG).toFixed(2);
-  return { t: t, speed: speed.toFixed(1), priRpm: Math.round(priRpm), secRpm: Math.round(secRpm), ratio: ratio, latG: latG, longG: longG, totalG: totalG };
+  return { t: t, latG: latG, longG: longG, totalG: totalG };
 }
 
 function initTelemetryEngine() {
@@ -427,9 +488,9 @@ window.setTelemetrySpeed = function(multiplier) {
   telemetrySpeedMultiplier = multiplier;
   document.querySelectorAll('.telemetry-speed-btn').forEach(function(btn) {
     if (parseFloat(btn.getAttribute('data-speed')) === multiplier) {
-      btn.className = 'telemetry-speed-btn px-2.5 py-2 border border-cold-border bg-cold-titanium text-cold-pure font-bold';
+      btn.className = 'telemetry-speed-btn px-2 py-1.5 border border-cold-border bg-cold-titanium text-cold-pure font-bold';
     } else {
-      btn.className = 'telemetry-speed-btn px-2.5 py-2 border border-cold-border text-cold-slate hover:text-cold-pure';
+      btn.className = 'telemetry-speed-btn px-2 py-1.5 border border-cold-border text-cold-slate hover:text-cold-pure';
     }
   });
 };
@@ -482,25 +543,16 @@ function updateTelemetryUI() {
   const sample = getTelemetrySample(telemetryTime);
 
   const timeEl = document.getElementById('telemetry-time-readout');
-  const speedEl = document.getElementById('readout-speed');
-  const priRpmEl = document.getElementById('readout-pri-rpm');
-  const secRpmEl = document.getElementById('readout-sec-rpm');
-  const ratioEl = document.getElementById('readout-ratio');
   const gTotalEl = document.getElementById('friction-g-total');
   const latGEl = document.getElementById('friction-lat-g');
   const longGEl = document.getElementById('friction-long-g');
 
   if (timeEl) timeEl.textContent = telemetryTime.toFixed(2) + 's';
-  if (speedEl) speedEl.textContent = sample.speed + ' MPH';
-  if (priRpmEl) priRpmEl.textContent = sample.priRpm.toLocaleString() + ' RPM';
-  if (secRpmEl) secRpmEl.textContent = sample.secRpm.toLocaleString() + ' RPM';
-  if (ratioEl) ratioEl.textContent = sample.ratio;
   if (gTotalEl) gTotalEl.textContent = sample.totalG + ' G';
   if (latGEl) latGEl.textContent = (sample.latG >= 0 ? '+' : '') + sample.latG.toFixed(2) + ' G';
   if (longGEl) longGEl.textContent = (sample.longG >= 0 ? '+' : '') + sample.longG.toFixed(2) + ' G';
 
   renderFrictionCircleCanvas(sample);
-  renderWaveformCanvas(telemetryTime);
 }
 
 function renderFrictionCircleCanvas(currentSample) {
@@ -512,11 +564,12 @@ function renderFrictionCircleCanvas(currentSample) {
   const h = canvas.height;
   const cx = w / 2;
   const cy = h / 2;
-  const radius = cx - 25;
+  const radius = cx - 28;
 
   ctx.clearRect(0, 0, w, h);
 
-  ctx.strokeStyle = '#1a2336';
+  // Concentric G-Limit Boundary Rings (0.5G, 1.0G, 1.6G)
+  ctx.strokeStyle = '#1a2334';
   ctx.lineWidth = 1.5;
   [0.33, 0.66, 1.0].forEach(function(r) {
     ctx.beginPath();
@@ -524,6 +577,7 @@ function renderFrictionCircleCanvas(currentSample) {
     ctx.stroke();
   });
 
+  // Crosshairs
   ctx.beginPath();
   ctx.moveTo(cx, cy - radius);
   ctx.lineTo(cx, cy + radius);
@@ -531,11 +585,12 @@ function renderFrictionCircleCanvas(currentSample) {
   ctx.lineTo(cx + radius, cy);
   ctx.stroke();
 
-  const trailCount = 18;
+  // Historic acceleration scatter trail
+  const trailCount = 20;
   for (let i = trailCount; i >= 1; i--) {
     const pastT = Math.max(0, telemetryTime - (i * 0.05));
     const s = getTelemetrySample(pastT);
-    const alpha = (1 - (i / trailCount)) * 0.55;
+    const alpha = (1 - (i / trailCount)) * 0.6;
     const px = cx + (s.latG / 1.6) * radius;
     const py = cy - (s.longG / 1.6) * radius;
 
@@ -545,111 +600,28 @@ function renderFrictionCircleCanvas(currentSample) {
     ctx.fill();
   }
 
+  // Active G acceleration vector line
   const curX = cx + (currentSample.latG / 1.6) * radius;
   const curY = cy - (currentSample.longG / 1.6) * radius;
 
-  ctx.strokeStyle = 'rgba(255, 77, 0, 0.75)';
+  ctx.strokeStyle = 'rgba(255, 77, 0, 0.8)';
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(cx, cy);
   ctx.lineTo(curX, curY);
   ctx.stroke();
 
+  // Point Puck
   ctx.fillStyle = '#ffffff';
   ctx.beginPath();
   ctx.arc(curX, curY, 5, 0, Math.PI * 2);
   ctx.fill();
   ctx.strokeStyle = '#ff4d00';
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 2.5;
   ctx.stroke();
 }
 
-function renderWaveformCanvas(currentTime) {
-  const canvas = document.getElementById('waveform-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  const w = canvas.width;
-  const h = canvas.height;
-
-  ctx.clearRect(0, 0, w, h);
-
-  const padL = 40;
-  const padR = 20;
-  const padT = 15;
-  const padB = 25;
-  const plotW = w - padL - padR;
-  const plotH = h - padT - padB;
-
-  ctx.strokeStyle = '#0f1420';
-  ctx.lineWidth = 1;
-  for (let s = 0; s <= 12; s += 2) {
-    const x = padL + (s / 12) * plotW;
-    ctx.beginPath();
-    ctx.moveTo(x, padT);
-    ctx.lineTo(x, h - padB);
-    ctx.stroke();
-  }
-  for (let r = 0; r <= 4; r++) {
-    const y = padT + (r / 4) * plotH;
-    ctx.beginPath();
-    ctx.moveTo(padL, y);
-    ctx.lineTo(w - padR, y);
-    ctx.stroke();
-  }
-
-  // Primary RPM Trace (Safety Orange)
-  ctx.strokeStyle = '#ff4d00';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  for (let t = 0; t <= 12; t += 0.08) {
-    const s = getTelemetrySample(t);
-    const px = padL + (t / 12) * plotW;
-    const py = (h - padB) - ((s.priRpm - 1500) / 2500) * plotH;
-    if (t === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
-  }
-  ctx.stroke();
-
-  // Secondary RPM Trace (Ice Blue)
-  ctx.strokeStyle = '#38bdf8';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  for (let t = 0; t <= 12; t += 0.08) {
-    const s = getTelemetrySample(t);
-    const px = padL + (t / 12) * plotW;
-    const py = (h - padB) - ((s.secRpm - 0) / 3500) * plotH;
-    if (t === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
-  }
-  ctx.stroke();
-
-  // Speed Trace (Pure White)
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
-  ctx.lineWidth = 1.8;
-  ctx.beginPath();
-  for (let t = 0; t <= 12; t += 0.08) {
-    const s = getTelemetrySample(t);
-    const px = padL + (t / 12) * plotW;
-    const py = (h - padB) - (s.speed / 45.0) * plotH;
-    if (t === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
-  }
-  ctx.stroke();
-
-  // Scrubber Cursor Line
-  const curX = padL + (currentTime / 12) * plotW;
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([4, 3]);
-  ctx.beginPath();
-  ctx.moveTo(curX, padT);
-  ctx.lineTo(curX, h - padB);
-  ctx.stroke();
-  ctx.setLineDash([]);
-}
-
-// 7. FULLSCREEN BLUEPRINT LIGHTBOX MODAL
+// 8. FULLSCREEN BLUEPRINT LIGHTBOX MODAL
 window.openInspectorModal = function(pIdx, iIdx) {
   if (typeof iIdx === 'undefined') iIdx = 0;
   const source = window.projectsData;
@@ -741,7 +713,7 @@ function setupKeyboardShortcuts() {
   });
 }
 
-// 8. CLIPBOARD DISPATCH TOOL
+// 9. CLIPBOARD DISPATCH TOOL
 window.copyEmailToClipboard = function() {
   const email = "aibel@tamu.edu";
   const btn = document.getElementById('copy-email-btn');
@@ -759,7 +731,7 @@ window.copyEmailToClipboard = function() {
         initLucide();
       }
     }, 3000);
-  }).catch(function() {
+  }).catch(() => {
     window.location.href = 'mailto:' + email;
   });
 };

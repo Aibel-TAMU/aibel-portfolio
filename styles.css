@@ -1,10 +1,10 @@
 :root {
   --cold-void: #000000;
-  --cold-gunmetal: #080b11;
-  --cold-titanium: #0f1420;
-  --cold-panel: #151c2c;
-  --cold-border: #1a2336;
-  --cold-border-light: #26334d;
+  --cold-gunmetal: #07090e;
+  --cold-titanium: #0d121c;
+  --cold-panel: #121824;
+  --cold-border: #1a2334;
+  --cold-border-light: #283650;
   --cold-safety: #ff4d00;
   --cold-ice: #38bdf8;
 }
@@ -14,7 +14,7 @@ html, body {
   color: #8b9bb4;
 }
 
-/* Engineering Coordinate Grid */
+/* Hairline Coordinate Blueprint Grid */
 .engineering-grid {
   background-image: 
     linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
@@ -22,15 +22,15 @@ html, body {
   background-size: 40px 40px;
 }
 
-/* Subtle Vignette */
+/* Optical Vignette */
 .bg-radial-vignette {
-  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.82) 100%);
+  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.85) 100%);
 }
 
 /* Background Watermark */
 .watermark-text {
   position: absolute;
-  top: 8%;
+  top: 6%;
   right: -3%;
   font-family: 'Cabinet Grotesk', 'Space Grotesk', sans-serif;
   font-size: clamp(8rem, 24vw, 26rem);
@@ -42,7 +42,7 @@ html, body {
   letter-spacing: -0.06em;
 }
 
-/* Pop-in Transitions */
+/* Pop-in Reveal Animations */
 .pop-in {
   opacity: 0;
   transform: translateY(32px) scale(0.985);
@@ -54,11 +54,11 @@ html, body {
   transform: translateY(0) scale(1);
 }
 
-/* Image Container */
+/* Image Containers */
 .image-zoom-box {
   position: relative;
   overflow: hidden;
-  background-color: #080b11;
+  background-color: #05070a;
 }
 .image-zoom-box img {
   transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
@@ -78,7 +78,7 @@ html, body {
 }
 ::-webkit-scrollbar-thumb {
   background: #141b29;
-  border: 1px solid #1a2336;
+  border: 1px solid #1a2334;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #cbd5e1;
@@ -90,7 +90,7 @@ html, body {
   opacity: 1 !important;
 }
 
-/* Category Filter Active States */
+/* Project Filter Active States */
 .project-filter-btn.active {
   background-color: #ffffff !important;
   color: #000000 !important;
