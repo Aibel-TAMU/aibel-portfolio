@@ -2,14 +2,13 @@
   --cold-void: #000000;
   --cold-gunmetal: #05070a;
   --cold-titanium: #0b0f17;
-  --cold-panel: #101622;
-  --cold-border: #161f30;
+  --cold-border: #151d2d;
   --cold-border-light: #24324a;
   --cold-safety: #ff4d00;
   --cold-ice: #38bdf8;
 }
 
-/* Strict Pitch Black Foundation */
+/* Enforce Absolute Pitch Black Foundation */
 html, body {
   background-color: #000000 !important;
   color: #8b9bb4;
@@ -18,17 +17,12 @@ html, body {
 /* Hairline Engineering Coordinate Grid */
 .engineering-grid {
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
-/* Optical Vignette */
-.bg-radial-vignette {
-  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.88) 100%);
-}
-
-/* Background Watermark */
+/* Architectural Background Watermark */
 .watermark-text {
   position: absolute;
   top: 6%;
@@ -55,7 +49,7 @@ html, body {
   transform: translateY(0) scale(1);
 }
 
-/* Image Container */
+/* Huge Image Container */
 .image-zoom-box {
   position: relative;
   overflow: hidden;
@@ -69,7 +63,7 @@ html, body {
   transform: scale(1.025);
 }
 
-/* Minimalist Scrollbars */
+/* Minimalist Avionics Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -79,7 +73,7 @@ html, body {
 }
 ::-webkit-scrollbar-thumb {
   background: #141b29;
-  border: 1px solid #161f30;
+  border: 1px solid #151d2d;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #cbd5e1;

@@ -11,7 +11,7 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Technical & Display Typography -->
+  <!-- Technical & Architectural Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- Pitch-Black Avionics Theme -->
+  <!-- Pitch Black Avionics Theme Configuration -->
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -30,8 +30,7 @@
               void: '#000000',
               gunmetal: '#05070a',
               titanium: '#0b0f17',
-              panel: '#101622',
-              border: '#161f30',
+              border: '#151d2d',
               borderLight: '#24324a',
               subtle: '#475569',
               slate: '#8b9bb4',
@@ -54,23 +53,22 @@
 </head>
 <body class="bg-black text-cold-slate font-sans antialiased selection:bg-cold-safety selection:text-white relative min-h-screen overflow-x-hidden">
 
-  <!-- 60FPS PITCH-BLACK STARFIELD & SPARK CANVAS -->
+  <!-- 60FPS PITCH BLACK STARFIELD & WHITE SPARK PARTICLE CANVAS -->
   <canvas id="starfield-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
 
-  <!-- Hairline Coordinate Grid & Vignette Overlay -->
+  <!-- Hairline Technical Coordinate Grid -->
   <div class="fixed inset-0 pointer-events-none z-0 engineering-grid"></div>
-  <div class="fixed inset-0 pointer-events-none z-0 bg-radial-vignette"></div>
 
   <!-- Realtime Scroll Progress Strip -->
   <div id="scroll-progress-bar" class="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-cold-ice via-cold-safety to-cold-pure z-50 transition-all duration-75 w-0"></div>
 
   <!-- HUD STATUS HEADER -->
-  <header class="sticky top-0 z-40 backdrop-blur-xl bg-black/85 border-b border-cold-border/80">
+  <header class="sticky top-0 z-40 backdrop-blur-xl bg-black/90 border-b border-cold-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
       <!-- Brand Identifier -->
       <a href="#" class="flex items-center gap-3 group">
-        <div class="w-8 h-8 bg-black border border-cold-borderLight flex items-center justify-center font-mono font-bold text-cold-pure text-xs group-hover:border-cold-safety transition-colors shadow-[0_0_12px_rgba(255,77,0,0.15)]">
+        <div class="w-8 h-8 bg-black border border-cold-borderLight flex items-center justify-center font-mono font-bold text-cold-pure text-xs group-hover:border-cold-safety transition-colors shadow-[0_0_12px_rgba(255,77,0,0.2)]">
           AJ
         </div>
         <div class="flex flex-col">
@@ -81,7 +79,7 @@
         </div>
       </a>
 
-      <!-- Realtime Telemetry Status -->
+      <!-- Realtime Avionics Telemetry Streamer -->
       <div class="hidden lg:flex items-center gap-5 font-mono text-[11px] text-cold-subtle">
         <div class="flex items-center gap-2">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -121,150 +119,200 @@
     </div>
   </header>
 
-  <!-- HERO SECTION WITH IMMEDIATE G-G FRICTION CIRCLE CONSOLE -->
-  <section class="relative z-10 pt-10 pb-16 md:pt-16 md:pb-24 border-b border-cold-border overflow-hidden">
+  <!-- HERO SECTION -->
+  <section class="relative z-10 pt-12 pb-16 md:pt-20 md:pb-24 border-b border-cold-border overflow-hidden">
     <div class="watermark-text select-none">TAMU//29</div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-      
-      <!-- Status Badge -->
-      <div class="pop-in inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-black border border-cold-border font-mono text-xs mb-8 backdrop-blur-md">
-        <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cold-safety opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-cold-safety"></span>
-        </span>
-        <span class="text-cold-pure font-bold">SYSTEMS INTEGRATION &amp; TEST ENGINEERING</span>
-        <span class="text-cold-subtle">|</span>
-        <span class="text-cold-slate">AVAILABLE SPRING / SUMMER 2027 CO-OP</span>
-      </div>
-
-      <!-- Hero Grid: Left = Headline & Stats, Right = Live G-G Telemetry Terminal -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+      <div class="max-w-5xl">
         
-        <!-- Left: Statement & Metrics (7 Cols) -->
-        <div class="lg:col-span-7">
-          <h1 class="pop-in text-5xl sm:text-7xl lg:text-8xl font-display font-extrabold text-cold-pure uppercase tracking-tight leading-[0.88] mb-6">
-            Mechanical. <br>
-            <span class="text-cold-subtle">Embedded.</span> <br>
-            <span class="text-cold-pure underline decoration-cold-safety decoration-4 underline-offset-[12px]">Validated.</span>
-          </h1>
+        <!-- Status Indicator Pill -->
+        <div class="pop-in inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-black border border-cold-border font-mono text-xs mb-8">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cold-safety opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-cold-safety"></span>
+          </span>
+          <span class="text-cold-pure font-bold">SYSTEMS INTEGRATION &amp; TEST ENGINEERING</span>
+          <span class="text-cold-subtle">|</span>
+          <span class="text-cold-slate">AVAILABLE SPRING / SUMMER 2027 CO-OP</span>
+        </div>
 
-          <p class="pop-in text-base sm:text-lg text-cold-slate leading-relaxed font-normal max-w-2xl mb-8">
-            Sophomore Mechanical Engineering major &amp; Electrical Engineering minor at <strong class="text-cold-pure font-medium">Texas A&amp;M University</strong>. Test Engineer for TAMU's <strong class="text-cold-pure font-medium">SAE Baja</strong> and <strong class="text-cold-pure font-medium">Naval Design</strong> teams. Focused on structural FEA, deterministically clocked CAN FD telemetry architectures, and closed-loop embedded controls under dynamic track loading.
-          </p>
+        <!-- Giant Display Headline -->
+        <h1 class="pop-in text-6xl sm:text-8xl lg:text-9xl font-display font-extrabold text-cold-pure uppercase tracking-tight leading-[0.88] mb-8">
+          Mechanical. <br>
+          <span class="text-cold-subtle">Embedded.</span> <br>
+          <span class="text-cold-pure underline decoration-cold-safety decoration-4 underline-offset-[14px]">Validated.</span>
+        </h1>
 
-          <!-- Metrics Strip -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 font-mono">
-            <div class="pop-in p-4 bg-black border border-cold-border">
-              <span class="text-[9px] text-cold-subtle block uppercase tracking-wider">GPA</span>
-              <span class="text-2xl sm:text-3xl font-extrabold text-cold-pure block mt-1">
-                <span class="counter" data-target="4.00" data-decimals="2">0.00</span>
-              </span>
-              <span class="text-[10px] text-cold-slate mt-0.5 block">Texas A&amp;M Honors</span>
-            </div>
+        <!-- High-Impact Bio -->
+        <p class="pop-in text-lg sm:text-xl text-cold-slate leading-relaxed font-normal max-w-3xl mb-12">
+          Sophomore Mechanical Engineering major &amp; Electrical Engineering minor at <strong class="text-cold-pure font-medium">Texas A&amp;M University</strong>. Test Engineer for TAMU's <strong class="text-cold-pure font-medium">SAE Baja</strong> and <strong class="text-cold-pure font-medium">Naval Design</strong> teams. Focused on structural FEA, deterministically clocked CAN FD telemetry architectures, and closed-loop embedded controls under dynamic track loading.
+        </p>
 
-            <div class="pop-in p-4 bg-black border border-cold-border">
-              <span class="text-[9px] text-cold-subtle block uppercase tracking-wider">Subteam</span>
-              <span class="text-xl sm:text-2xl font-bold text-cold-pure block mt-1 truncate">SAE Baja</span>
-              <span class="text-[10px] text-cold-slate mt-0.5 block">Controls &amp; DAQ</span>
-            </div>
-
-            <div class="pop-in p-4 bg-black border border-cold-border">
-              <span class="text-[9px] text-cold-subtle block uppercase tracking-wider">Protocol</span>
-              <span class="text-xl sm:text-2xl font-bold text-cold-pure block mt-1">CAN FD</span>
-              <span class="text-[10px] text-cold-slate mt-0.5 block">2 Mbps Data Rate</span>
-            </div>
-
-            <div class="pop-in p-4 bg-black border border-cold-border">
-              <span class="text-[9px] text-cold-subtle block uppercase tracking-wider">Analysis</span>
-              <span class="text-xl sm:text-2xl font-bold text-cold-pure block mt-1">ANSYS</span>
-              <span class="text-[10px] text-cold-slate mt-0.5 block">Mechanical FEA</span>
-            </div>
+        <!-- Live Telemetry Stat Strip -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 font-mono">
+          <div class="pop-in p-5 bg-black border border-cold-border">
+            <span class="text-[10px] text-cold-subtle block uppercase tracking-wider">Cumulative GPA</span>
+            <span class="text-4xl font-extrabold text-cold-pure block mt-1">
+              <span class="counter" data-target="4.00" data-decimals="2">0.00</span>
+            </span>
+            <span class="text-[11px] text-cold-slate mt-0.5 block">Texas A&amp;M Honors</span>
           </div>
 
-          <!-- Direct Actions -->
-          <div class="pop-in flex flex-wrap items-center gap-3 font-mono text-xs">
-            <a href="#projects-feed" class="px-6 py-3.5 bg-cold-pure hover:bg-cold-silver text-black font-bold transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95">
-              <span>EXPLORE HARDWARE BUILDS</span>
-              <i data-lucide="arrow-down" class="w-4 h-4"></i>
-            </a>
+          <div class="pop-in p-5 bg-black border border-cold-border">
+            <span class="text-[10px] text-cold-subtle block uppercase tracking-wider">Field Subteams</span>
+            <span class="text-2xl font-bold text-cold-pure block mt-2 truncate">SAE Baja</span>
+            <span class="text-[11px] text-cold-slate mt-0.5 block">Controls &amp; DAQ Lead</span>
+          </div>
 
-            <a href="assets/resume.pdf" download class="px-6 py-3.5 bg-black hover:bg-cold-titanium text-cold-pure border border-cold-border transition-all flex items-center gap-2 active:scale-95"[cite: 1]>
-              <i data-lucide="file-text" class="w-4 h-4 text-cold-subtle"></i>
-              <span>RESUME (PDF)</span>
-            </a>
+          <div class="pop-in p-5 bg-black border border-cold-border">
+            <span class="text-[10px] text-cold-subtle block uppercase tracking-wider">Bus Protocol</span>
+            <span class="text-2xl font-bold text-cold-pure block mt-2">CAN FD</span>
+            <span class="text-[11px] text-cold-slate mt-0.5 block">2 Mbps Data Rate</span>
+          </div>
+
+          <div class="pop-in p-5 bg-black border border-cold-border">
+            <span class="text-[10px] text-cold-subtle block uppercase tracking-wider">Simulation Stack</span>
+            <span class="text-2xl font-bold text-cold-pure block mt-2">ANSYS</span>
+            <span class="text-[11px] text-cold-slate mt-0.5 block">SolidWorks FEA / CFD</span>
           </div>
         </div>
 
-        <!-- Right: MoTeC-Style G-G Friction Circle Console (5 Cols) -->
-        <div id="hero-telemetry" class="lg:col-span-5 pop-in">
-          <div class="bg-black border border-cold-border p-5 shadow-[0_0_35px_rgba(0,0,0,0.95)] backdrop-blur-md relative">
+        <!-- Quick Action Links -->
+        <div class="pop-in flex flex-wrap items-center gap-4 font-mono text-xs">
+          <a href="#projects-feed" class="px-7 py-4 bg-cold-pure hover:bg-cold-silver text-black font-bold transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.25)] active:scale-95">
+            <span>SCROLL HARDWARE BUILDS</span>
+            <i data-lucide="arrow-down" class="w-4 h-4"></i>
+          </a>
+
+          <a href="#hero-telemetry" class="px-7 py-4 bg-black hover:bg-cold-titanium text-cold-pure border border-cold-border transition-all flex items-center gap-2 active:scale-95">
+            <i data-lucide="activity" class="w-4 h-4 text-cold-safety"></i>
+            <span>G-G TELEMETRY CONSOLE</span>
+          </a>
+
+          <a href="assets/resume.pdf" download class="px-7 py-4 bg-black hover:bg-cold-titanium text-cold-pure border border-cold-border transition-all flex items-center gap-2 active:scale-95"[cite: 1]>
+            <i data-lucide="file-text" class="w-4 h-4 text-cold-subtle"></i>
+            <span>RESUME (PDF)</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MOTEC-STYLE CHASSIS G-G TELEMETRY CONSOLE -->
+  <section id="hero-telemetry" class="relative z-10 py-16 md:py-24 border-b border-cold-border bg-black">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="pop-in flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div>
+          <div class="font-mono text-xs text-cold-safety font-bold uppercase tracking-widest mb-1 flex items-center gap-2">
+            <i data-lucide="compass" class="w-4 h-4"></i>
+            VEHICLE DYNAMICS // TEST LOG REPLAY
+          </div>
+          <h2 class="text-3xl sm:text-5xl font-display font-extrabold text-cold-pure uppercase">
+            G-G Friction Circle Telemetry
+          </h2>
+          <p class="text-cold-slate text-sm mt-2 max-w-2xl font-sans">
+            Directly modeled from Texas A&amp;M SAE Baja acceleration and slalom test runs. Scrub the timeline to inspect synchronized lateral/longitudinal vector friction behavior under 100 Hz deterministic sampling.
+          </p>
+        </div>
+
+        <!-- Telemetry Controls -->
+        <div class="flex items-center gap-3 font-mono text-xs bg-black p-2 border border-cold-border">
+          <button id="telemetry-play-btn" onclick="window.toggleTelemetryPlayback()" class="px-4 py-2 bg-cold-pure hover:bg-cold-silver text-black font-bold flex items-center gap-2 transition-all active:scale-95 shadow-[0_0_12px_rgba(255,255,255,0.2)]">
+            <i data-lucide="pause" class="w-3.5 h-3.5"></i>
+            <span>PAUSE</span>
+          </button>
+          <button onclick="window.setTelemetrySpeed(1)" class="telemetry-speed-btn px-2.5 py-2 border border-cold-border bg-black text-cold-pure font-bold" data-speed="1">1X</button>
+          <button onclick="window.setTelemetrySpeed(2)" class="telemetry-speed-btn px-2.5 py-2 border border-cold-border text-cold-slate hover:text-cold-pure" data-speed="2">2X</button>
+          <span class="text-cold-border">/</span>
+          <span class="text-cold-slate">TIME: <strong id="telemetry-time-readout" class="text-cold-pure">0.00s</strong> / 12.00s</span>
+        </div>
+      </div>
+
+      <!-- Scrubber Slider -->
+      <div class="pop-in p-4 bg-black border border-cold-border mb-8 font-mono text-xs">
+        <div class="flex justify-between items-center mb-2 text-cold-subtle text-[11px]">
+          <span>RUN SECTOR: 0–350 FT ACCEL &amp; SLALOM TEST</span>
+          <span class="text-cold-pure font-bold">100 Hz DETERMINISTIC RATE</span>
+        </div>
+        <input type="range" id="telemetry-scrubber" min="0" max="12" step="0.05" value="0" class="w-full h-1.5 bg-cold-border appearance-none cursor-pointer accent-cold-safety">
+        <div class="flex justify-between text-[10px] text-cold-subtle mt-2 font-mono">
+          <span>0.0s (Launch)</span>
+          <span>3.2s (Peak Drive)</span>
+          <span>6.8s (Slalom Entry)</span>
+          <span>9.5s (Peak Lateral G)</span>
+          <span>12.0s (Braking Stall)</span>
+        </div>
+      </div>
+
+      <!-- Main Telemetry Stage -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        
+        <!-- Left: G-G Friction Circle Canvas (7 Cols) -->
+        <div class="pop-in lg:col-span-7 bg-black border border-cold-border p-6 flex flex-col justify-between">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-cold-border font-mono text-xs">
+            <span class="text-cold-pure font-bold flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-cold-safety animate-pulse"></span>
+              G-G FRICTION CIRCLE // 1.60 G BOUNDARY
+            </span>
+            <span class="text-[10px] text-cold-subtle">X: LATERAL · Y: LONGITUDINAL</span>
+          </div>
+
+          <div class="w-full bg-black border border-cold-border p-3 aspect-square max-h-[420px] flex items-center justify-center relative overflow-hidden mx-auto">
+            <canvas id="friction-circle-canvas" width="400" height="400" class="w-full h-full"></canvas>
             
-            <!-- Terminal Header -->
-            <div class="flex items-center justify-between pb-3 mb-4 border-b border-cold-border font-mono text-xs">
-              <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-cold-safety animate-pulse"></span>
-                <span class="text-cold-pure font-bold tracking-wider">G-G FRICTION CIRCLE // RUN LOG</span>
-              </div>
-              <span class="text-[10px] px-2 py-0.5 bg-cold-titanium border border-cold-border text-cold-ice font-bold">100 Hz DETERMINISTIC</span>
-            </div>
+            <span class="absolute top-2 left-1/2 -translate-x-1/2 font-mono text-[9px] text-cold-subtle tracking-widest">+BRAKE</span>
+            <span class="absolute bottom-2 left-1/2 -translate-x-1/2 font-mono text-[9px] text-cold-subtle tracking-widest">+ACCEL</span>
+            <span class="absolute left-2 top-1/2 -translate-y-1/2 font-mono text-[9px] text-cold-subtle -rotate-90 origin-center tracking-widest">+LEFT</span>
+            <span class="absolute right-2 top-1/2 -translate-y-1/2 font-mono text-[9px] text-cold-subtle rotate-90 origin-center tracking-widest">+RIGHT</span>
+          </div>
+        </div>
 
-            <!-- G-G Friction Circle Canvas Container -->
-            <div class="relative w-full aspect-square bg-black border border-cold-border p-2 flex items-center justify-center overflow-hidden mb-4">
-              <canvas id="friction-circle-canvas" width="360" height="360" class="w-full h-full"></canvas>
-              
-              <!-- Crosshair Directional Badges -->
-              <span class="absolute top-2 left-1/2 -translate-x-1/2 font-mono text-[9px] text-cold-subtle tracking-widest">+BRAKE (LONG G)</span>
-              <span class="absolute bottom-2 left-1/2 -translate-x-1/2 font-mono text-[9px] text-cold-subtle tracking-widest">+ACCEL (LONG G)</span>
-              <span class="absolute left-2 top-1/2 -translate-y-1/2 font-mono text-[9px] text-cold-subtle -rotate-90 origin-center tracking-widest">+LEFT LAT G</span>
-              <span class="absolute right-2 top-1/2 -translate-y-1/2 font-mono text-[9px] text-cold-subtle rotate-90 origin-center tracking-widest">+RIGHT LAT G</span>
-            </div>
+        <!-- Right: Quantitatives & Dynamics Monitor (5 Cols) -->
+        <div class="pop-in lg:col-span-5 bg-black border border-cold-border p-6 flex flex-col justify-between space-y-6">
+          <div class="border-b border-cold-border pb-4">
+            <div class="font-mono text-[10px] text-cold-safety uppercase tracking-wider mb-1">REAL-TIME INERTIAL VECTORS</div>
+            <h3 class="text-2xl font-display font-extrabold text-cold-pure uppercase">Chassis Load Telemetry</h3>
+          </div>
 
-            <!-- Timeline Scrubber -->
-            <div class="space-y-1 mb-4 font-mono text-xs">
-              <div class="flex justify-between items-center text-[10px] text-cold-subtle">
-                <span>0.0s (Launch)</span>
-                <span>6.8s (Slalom Entry)</span>
-                <span>9.5s (Peak Grip)</span>
-                <span>12.0s (Braking)</span>
-              </div>
-              <input type="range" id="telemetry-scrubber" min="0" max="12" step="0.05" value="0" class="w-full h-1.5 bg-cold-border appearance-none cursor-pointer accent-cold-safety">
-            </div>
-
-            <!-- Live G Vector Quantitatives -->
-            <div class="grid grid-cols-3 gap-2 p-3 bg-black border border-cold-border font-mono text-xs mb-4">
+          <div class="space-y-3 font-mono text-xs">
+            <div class="p-4 bg-black border border-cold-border flex justify-between items-center">
               <div>
-                <span class="text-cold-subtle block text-[9px]">LATERAL G</span>
-                <strong id="friction-lat-g" class="text-cold-pure text-sm">0.00 G</strong>
+                <span class="text-cold-subtle block text-[10px]">TOTAL RESULTANT VECTOR</span>
+                <span id="friction-g-total" class="text-3xl font-extrabold text-cold-pure">0.00 G</span>
               </div>
-              <div>
-                <span class="text-cold-subtle block text-[9px]">LONG G</span>
-                <strong id="friction-long-g" class="text-cold-pure text-sm">0.00 G</strong>
-              </div>
-              <div>
-                <span class="text-cold-subtle block text-[9px]">TOTAL VECTOR</span>
-                <strong id="friction-g-total" class="text-cold-safety text-sm">0.00 G</strong>
-              </div>
+              <span class="text-xs px-2.5 py-1 bg-cold-titanium border border-cold-border text-cold-safety font-bold">LIVE</span>
             </div>
 
-            <!-- Telemetry Replay Controls -->
-            <div class="flex items-center justify-between font-mono text-xs pt-1">
-              <div class="flex items-center gap-2">
-                <button id="telemetry-play-btn" onclick="window.toggleTelemetryPlayback()" class="px-3.5 py-1.5 bg-cold-pure hover:bg-cold-silver text-black font-bold flex items-center gap-1.5 transition-all active:scale-95">
-                  <i data-lucide="pause" class="w-3.5 h-3.5"></i>
-                  <span>PAUSE</span>
-                </button>
-                <button onclick="window.setTelemetrySpeed(1)" class="telemetry-speed-btn px-2 py-1.5 border border-cold-border bg-cold-titanium text-cold-pure font-bold" data-speed="1">1X</button>
-                <button onclick="window.setTelemetrySpeed(2)" class="telemetry-speed-btn px-2 py-1.5 border border-cold-border text-cold-slate hover:text-cold-pure" data-speed="2">2X</button>
+            <div class="p-4 bg-black border border-cold-border flex justify-between items-center">
+              <div>
+                <span class="text-cold-subtle block text-[10px]">LATERAL ACCELERATION</span>
+                <span id="friction-lat-g" class="text-2xl font-bold text-cold-pure">0.00 G</span>
               </div>
-
-              <div class="text-right">
-                <span class="text-cold-subtle text-[10px]">TIME: </span>
-                <strong id="telemetry-time-readout" class="text-cold-ice text-xs">0.00s</strong>
-                <span class="text-cold-subtle text-[10px]"> / 12.00s</span>
-              </div>
+              <span class="text-cold-subtle text-[11px]">CORNERING LOAD</span>
             </div>
 
+            <div class="p-4 bg-black border border-cold-border flex justify-between items-center">
+              <div>
+                <span class="text-cold-subtle block text-[10px]">LONGITUDINAL ACCELERATION</span>
+                <span id="friction-long-g" class="text-2xl font-bold text-cold-pure">0.00 G</span>
+              </div>
+              <span class="text-cold-subtle text-[11px]">TRACTION / BRAKING</span>
+            </div>
+
+            <div class="p-4 bg-black border border-cold-border flex justify-between items-center">
+              <div>
+                <span class="text-cold-subtle block text-[10px]">GROUND SPEED</span>
+                <span id="readout-speed" class="text-2xl font-bold text-cold-pure">0.0 MPH</span>
+              </div>
+              <span class="text-cold-ice text-[11px] font-bold">DOPPLER GNSS</span>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-cold-border font-mono text-[11px] text-cold-subtle leading-relaxed">
+            * Recorded via Texas A&amp;M SAE Baja DAQ sensor suite. 20-frame historic decay trail visualizes transition across friction circle threshold limits.
           </div>
         </div>
 
@@ -273,26 +321,26 @@
     </div>
   </section>
 
-  <!-- CONTINUOUS VERTICAL PROJECT FEED: RE-ENGINEERED BLUEPRINT DOSSIER -->
-  <section id="projects-feed" class="relative z-10 py-20 md:py-32 border-b border-cold-border">
+  <!-- MASSIVE CONTINUOUS VERTICAL PROJECT FEED -->
+  <section id="projects-feed" class="relative z-10 py-20 md:py-32 border-b border-cold-border bg-black">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <!-- Section Intro & Filter Switcher -->
-      <div class="pop-in flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-        <div class="max-w-2xl">
+      <!-- Section Intro Banner & Filter Switcher -->
+      <div class="pop-in flex flex-col md:flex-row md:items-end justify-between gap-6 mb-20">
+        <div class="max-w-3xl">
           <div class="font-mono text-xs text-cold-safety font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
             <i data-lucide="layers" class="w-4 h-4"></i>
-            <span>ENGINEERING UNITS // HARDWARE &amp; TELEMETRY DOSSIER</span>
+            <span>PORTFOLIO FEED // HARDWARE &amp; ARCHITECTURAL SCHEMATICS</span>
           </div>
           <h2 class="text-4xl sm:text-6xl font-display font-extrabold text-cold-pure uppercase tracking-tight">
-            Verified Subsystems
+            Featured Engineering Units
           </h2>
           <p class="text-cold-slate text-base mt-3 font-sans">
-            Full-scale CAD assemblies, finite element stress models, PCB layouts, and physical test validation runs. Switch slides directly on any card or expand into full-screen blueprint inspection.
+            Full-scale CAD assemblies, finite element stress deformation models, Altium PCB layouts, and empirical test bench verifications. Switch slides directly on any unit or click to inspect fullscreen blueprints.
           </p>
         </div>
 
-        <!-- Filter Controls -->
+        <!-- Interactive Category Switcher -->
         <div class="flex flex-wrap items-center gap-2 font-mono text-xs bg-black p-1.5 border border-cold-border">
           <button onclick="window.setProjectFilter('all')" class="project-filter-btn px-3 py-1.5 bg-cold-pure text-black font-bold transition-all" data-filter="all">ALL UNITS</button>
           <button onclick="window.setProjectFilter('structural')" class="project-filter-btn px-3 py-1.5 text-cold-slate hover:text-cold-pure transition-all" data-filter="structural">FEA &amp; STRUCTURAL</button>
@@ -301,19 +349,19 @@
         </div>
       </div>
 
-      <!-- Vertical Project Stream Container (Dynamically rendered via script.js) -->
+      <!-- The Vertical Project River (Dynamically populated via script.js) -->
       <div id="projects-feed-container" class="space-y-36"></div>
 
     </div>
   </section>
 
-  <!-- RECRUITER DOSSIER & VERIFIED CREDENTIALS -->
-  <section id="dossier" class="relative z-10 py-20 md:py-32 border-b border-cold-border">
+  <!-- RECRUITER DOSSIER & EMBEDDED RESUME VIEWER -->
+  <section id="dossier" class="relative z-10 py-20 md:py-32 border-b border-cold-border bg-black">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <!-- Left: Verified Summary Checklist -->
+        <!-- Left: Summary Checklist -->
         <div class="pop-in lg:col-span-4 space-y-4">
           <div class="font-mono text-xs text-cold-safety font-bold uppercase tracking-widest mb-1 flex items-center gap-2">
             <i data-lucide="shield-check" class="w-4 h-4"></i>
@@ -323,7 +371,7 @@
             Recruiter Dossier
           </h2>
           <p class="text-cold-slate text-sm font-sans leading-relaxed">
-            Official academic records, validated design logs, and authenticated resume files for aerospace, defense, and automotive engineering teams.
+            Direct access to official academic records, design logs, and authenticated resume files for aerospace, defense, and automotive engineering talent teams.
           </p>
 
           <div class="space-y-2 font-mono text-xs pt-4">
@@ -381,7 +429,7 @@
         </div>
 
         <!-- Right: Embedded Resume Preview -->
-        <div class="pop-in lg:col-span-8 bg-black border border-cold-border p-4 flex flex-col h-[650px] shadow-2xl backdrop-blur-md">
+        <div class="pop-in lg:col-span-8 bg-black border border-cold-border p-4 flex flex-col h-[650px] shadow-2xl">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-cold-border font-mono text-xs">
             <div class="flex items-center gap-2 text-cold-pure">
               <span class="w-2 h-2 rounded-full bg-cold-safety"></span>
@@ -412,7 +460,7 @@
   <footer id="contact" class="relative z-10 py-16 bg-black border-t border-cold-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <div class="pop-in p-8 sm:p-14 bg-black border border-cold-border relative overflow-hidden backdrop-blur-md">
+      <div class="pop-in p-8 sm:p-14 bg-black border border-cold-border relative overflow-hidden">
         
         <div class="max-w-3xl relative z-10">
           <div class="inline-flex items-center gap-2 px-3 py-1 bg-cold-titanium border border-cold-border text-cold-pure text-xs font-mono mb-4">
@@ -434,17 +482,17 @@
               <span>COPY: aibel@tamu.edu</span>
             </button>
 
-            <a href="mailto:aibel@tamu.edu" class="px-6 py-4 bg-black hover:bg-cold-panel text-cold-pure border border-cold-border flex items-center gap-2 transition-all active:scale-95">
+            <a href="mailto:aibel@tamu.edu" class="px-6 py-4 bg-black hover:bg-cold-titanium text-cold-pure border border-cold-border flex items-center gap-2 transition-all active:scale-95">
               <i data-lucide="send" class="w-4 h-4 text-cold-subtle"></i>
               <span>LAUNCH CLIENT</span>
             </a>
 
-            <a href="https://linkedin.com/in/aibel-jomon" target="_blank" rel="noopener noreferrer" class="px-6 py-4 bg-black hover:bg-cold-panel text-cold-pure border border-cold-border flex items-center gap-2 transition-all active:scale-95">
+            <a href="https://linkedin.com/in/aibel-jomon" target="_blank" rel="noopener noreferrer" class="px-6 py-4 bg-black hover:bg-cold-titanium text-cold-pure border border-cold-border flex items-center gap-2 transition-all active:scale-95">
               <i data-lucide="linkedin" class="w-4 h-4 text-sky-400"></i>
               <span>LINKEDIN</span>
             </a>
 
-            <a href="https://github.com/aibeljomon" target="_blank" rel="noopener noreferrer" class="px-6 py-4 bg-black hover:bg-cold-panel text-cold-pure border border-cold-border flex items-center gap-2 transition-all active:scale-95">
+            <a href="https://github.com/aibeljomon" target="_blank" rel="noopener noreferrer" class="px-6 py-4 bg-black hover:bg-cold-titanium text-cold-pure border border-cold-border flex items-center gap-2 transition-all active:scale-95">
               <i data-lucide="github" class="w-4 h-4 text-cold-pure"></i>
               <span>GITHUB</span>
             </a>
@@ -487,6 +535,7 @@
       <div class="relative flex-grow flex items-center justify-center p-4 bg-black overflow-hidden min-h-[380px]">
         <img id="modal-active-img" src="" alt="Hardware Blueprint Slide" class="max-h-[64vh] max-w-full object-contain select-none transition-all duration-300">
 
+        <!-- Nav Controls -->
         <button onclick="window.navigateModalImage(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/90 hover:bg-cold-pure hover:text-black border border-cold-border text-cold-pure transition-all" aria-label="Previous">
           <i data-lucide="chevron-left" class="w-5 h-5"></i>
         </button>
@@ -512,7 +561,7 @@
     <span id="hud-toast-msg">COMMS COPIED TO CLIPBOARD</span>
   </div>
 
-  <!-- SCRIPTS -->
+  <!-- APPLICATION SCRIPTS -->
   <script src="projects.js"></script>
   <script src="script.js"></script>
 </body>

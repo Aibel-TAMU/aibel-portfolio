@@ -7,19 +7,19 @@ window.projectsData = [
     timeline: "2026",
     statusBadge: "VALIDATED // FoS 2.45",
     tags: ["ANSYS Mechanical", "SolidWorks Simulation", "Pneumatic Ram", "Structural FEA", "Analog Calibration"],
-    summary: "High-load empirical test stand engineered to measure dynamic tire deflection and extract non-linear vertical spring rates (Ktire) across discrete pressure regimes.",
-    problemStatement: "Vendor lookup tables exhibited up to 28% spring rate variance under dynamic loading, degrading suspension damper valving.",
+    summary: "High-load empirical test stand engineered to measure tire deflection rates and extract non-linear vertical spring curves (Ktire) across discrete inflation regimes.",
+    problemStatement: "The vehicle suspension team required real spring constants (Ktire) to optimize damper valving, but vendor lookup tables exhibited up to 28% variance under dynamic chassis loading.",
     executionHighlights: [
       "Transitioned structural chassis from hydraulic actuation to a regulated pneumatic ram, eliminating frame distortion and compliance artifacts.",
       "Iterated structural cage to circular tubular steel with triangulated gusset plates, reducing vertical deflection error under 600 lbf normal load by 42%.",
-      "Resolved peak stress concentrations in ANSYS Mechanical, verifying a 2.45 Factor of Safety at stall load.",
+      "Solved stress concentrations in ANSYS Mechanical, verifying a 2.45 Factor of Safety at peak tire stall load.",
       "Calibrated high-speed analog linear distance sensors and S-beam load cells to log instantaneous force-displacement curves."
     ],
     engineeringSpecs: {
       "Actuation Method": "Pneumatic Cylinder (Regulated 0–120 PSI)",
       "FEA Solver Platform": "ANSYS Mechanical & SolidWorks Simulation",
       "Stall Load Capacity": "1,200 lbf (5,338 N)",
-      "Safety Factor (FoS)": "2.45 at Peak Stall Load",
+      "Safety Factor (FoS)": "2.45 at Peak Load",
       "Instrumentation": "S-Type Load Cell + Precision Analog Linear Pot"
     },
     images: [
