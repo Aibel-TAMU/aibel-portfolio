@@ -1,102 +1,71 @@
-/* styles.css */
+/* Cold Hard Titanium Custom Properties */
 :root {
-  --telemetry-cyan: #00f0ff;
-  --telemetry-plasma: #ff1744;
-  --telemetry-carbon: #060a12;
-  --telemetry-border: #152136;
+  --cold-void: #04060a;
+  --cold-titanium: #090d14;
+  --cold-steel: #0e1420;
+  --cold-border: #1f2b42;
+  --cold-cyan: #00f2fe;
+  --cold-ice: #38bdf8;
 }
 
-/* CRT / Avionics HUD Scanlines Overlay */
-.hud-scanlines {
-  background: linear-gradient(
-    rgba(18, 16, 16, 0) 50%, 
-    rgba(0, 0, 0, 0.3) 50%
-  ), linear-gradient(
-    90deg,
-    rgba(0, 240, 255, 0.03),
-    rgba(0, 255, 100, 0.01),
-    rgba(255, 23, 68, 0.03)
-  );
-  background-size: 100% 3px, 6px 100%;
-}
-
-/* Cockpit Grid Coordinate Pattern */
-.bg-cockpit-grid {
-  background-image: 
-    linear-gradient(to right, rgba(0, 240, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 240, 255, 0.06) 1px, transparent 1px);
-  background-size: 36px 36px;
+/* Subtle Vignette Shader */
+.bg-radial-vignette {
+  background: radial-gradient(circle at 50% 50%, transparent 60%, rgba(4, 6, 10, 0.85) 100%);
 }
 
 /* Tactical Angular Clipped Edge */
 .clip-corner {
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
 }
 
-/* Avionics Scrollbars */
+/* Precision Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #02050a;
+  background: #04060a;
 }
 ::-webkit-scrollbar-thumb {
   background: #152136;
-  border: 1px solid #22385c;
+  border: 1px solid #1f2b42;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00f0ff;
+  background: #00f2fe;
 }
 
-/* Interactive 3D Card Reticles */
-.mfd-card {
+/* Reticle Corner Highlights on Console Boxes */
+.pfd-console {
   position: relative;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
-  transform-style: preserve-3d;
 }
-.mfd-card::before {
+.pfd-console::before {
   content: "";
   position: absolute;
   top: -1px;
   left: -1px;
-  width: 12px;
-  height: 12px;
-  border-top: 2px solid #00f0ff;
-  border-left: 2px solid #00f0ff;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid #00f2fe;
+  border-left: 2px solid #00f2fe;
   z-index: 2;
   pointer-events: none;
 }
-.mfd-card::after {
+.pfd-console::after {
   content: "";
   position: absolute;
   bottom: -1px;
   right: -1px;
-  width: 12px;
-  height: 12px;
-  border-bottom: 2px solid #ff1744;
-  border-right: 2px solid #ff1744;
+  width: 10px;
+  height: 10px;
+  border-bottom: 2px solid #00f2fe;
+  border-right: 2px solid #00f2fe;
   z-index: 2;
   pointer-events: none;
 }
-.mfd-card:hover {
-  border-color: rgba(0, 240, 255, 0.6);
-  box-shadow: 0 15px 40px -10px rgba(0, 240, 255, 0.25);
-}
 
-/* Blueprint Shader Mode Filter */
+/* Blueprint Shader Inversion */
 .blueprint-mode {
-  filter: invert(1) hue-rotate(185deg) contrast(1.7) saturate(2) brightness(0.9) !important;
-}
-
-/* Tachometer LED Segments */
-.tach-led {
-  opacity: 0.2;
-  transition: opacity 0.1s ease;
-}
-.tach-led.active {
-  opacity: 1 !important;
-  box-shadow: 0 0 8px currentColor;
+  filter: invert(1) hue-rotate(180deg) contrast(1.8) saturate(2.2) brightness(0.9) !important;
 }
 
 /* Modal Open Visibility */
