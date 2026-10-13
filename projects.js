@@ -1,3 +1,4 @@
+// projects.js
 const projectsData = [
   {
     id: "tire-rig",
@@ -5,21 +6,21 @@ const projectsData = [
     title: "Vertical Tire Stiffness Test Rig",
     team: "Texas A&M SAE Baja // Suspension Subteam",
     timeline: "2026",
-    tags: ["ANSYS Mechanical", "SolidWorks", "Structural FEA", "Analog DAQ", "Pneumatic Actuation"],
-    summary: "End-to-end development of an empirical tire stiffness calibration platform delivering validated spring-rate curves across discrete operating PSI ranges.",
-    problemStatement: "The vehicle suspension team required real spring constants (K_tire) to optimize shock damping curves, but existing vendor lookup tables showed up to 28% variance under high dynamic chassis loading.",
+    tags: ["ANSYS Mechanical", "SolidWorks FEA", "Dynamic Load", "Pneumatic Actuation", "Analog Potentiometers"],
+    summary: "High-load empirical test stand engineered to measure tire deflection rates and extract non-linear vertical spring curves ($K_{tire}$) across varied pressure regimes.",
+    problemStatement: "Suspension kinematic models and damper valving curves previously relied on static vendor charts with up to 28% variance under aggressive high-G chassis roll.",
     executionHighlights: [
-      "V1–V3 prototypes transitioned from a hydraulic bottle-jack architecture to a precision pneumatic cylinder configuration, eliminating frame deflection artifacts.",
-      "Iterated structural chassis CAD to tubular circular steel with triangulated gusset plates, reducing vertical deflection error under 600 lbf normal load by 42%.",
-      "Conducted structural finite element stress and deflection simulations across SolidWorks Simulation and ANSYS Mechanical, guaranteeing a minimum factor of safety (FoS) > 2.4.",
-      "Integrated dual analog displacement potentiometers and calibrated load cell readouts with zero-latency baseline logging."
+      "Transitioned structural chassis from hydraulic actuation to a regulated pneumatic ram, eliminating frame distortion and compliance artifacts.",
+      "Iterated structural cage to circular tubular steel with triangulated gussets, cutting frame deflection error under 600 lbf normal load by 42%.",
+      "Solved stress concentrations in ANSYS Mechanical to secure a 2.45 Factor of Safety at peak tire stall load.",
+      "Calibrated high-speed analog linear distance sensors and S-beam load cells to log instantaneous force-displacement curves."
     ],
     engineeringSpecs: {
       "Actuation Method": "Pneumatic Cylinder (Regulated 0–120 PSI)",
-      "FEA Platform": "ANSYS Mechanical & SolidWorks Simulation",
-      "Target Load Capacity": "1,200 lbf (5,338 N)",
-      "Safety Factor (FoS)": "2.45 at peak dynamic stall load",
-      "Instrumentation": "Calibrated S-type load cell + analog linear pot"
+      "FEA Solver": "ANSYS Mechanical 2026",
+      "Rated Stall Capacity": "1,200 lbf (5,338 N)",
+      "Factor of Safety (FoS)": "2.45 Peak Load",
+      "Sensors Integrated": "Analog Linear Pot + Calibrated Load Cell"
     },
     images: [
       { src: "assets/project1/main.jpg", alt: "Mechanical Assembly Render (V4 Tubular Rig)" },
@@ -35,24 +36,24 @@ const projectsData = [
   {
     id: "accelerated-daq",
     category: "daq",
-    title: "Accelerated Powertrain DAQ Platform",
-    team: "Texas A&M SAE Baja // Powertrain & CVT",
+    title: "Accelerated Powertrain DAQ Suite",
+    team: "Texas A&M SAE Baja // Powertrain Subteam",
     timeline: "2026",
-    tags: ["ESP32", "Altium Designer", "BLE Protocol", "FreeRTOS", "RaceBox Mini", "Sensor Integration"],
-    summary: "High-speed modular telemetry and datalogging suite engineered under compressed timelines to validate continuously variable transmission (CVT) shift curves.",
-    problemStatement: "The drivetrain subteam needed synchronized millisecond-accurate primary vs. secondary CVT RPM together with ground speed and acceleration vectors to tune flyweight engagement.",
+    tags: ["ESP32", "Altium PCB", "FreeRTOS", "BLE Protocol", "RaceBox Mini", "Hall Effect"],
+    summary: "Real-time powertrain telemetry system deployed under compressed lead times to capture primary vs. secondary clutch engagement curves and vehicle acceleration.",
+    problemStatement: "The CVT tuning team needed synchronized millisecond-accurate RPM data coupled to live 25 Hz GPS and inertial acceleration vectors to optimize flyweight profiles.",
     executionHighlights: [
-      "Engineered dual-channel pulse-counter firmware running deterministic FreeRTOS hardware timer interrupts on ESP32 Core 0.",
-      "Interfaced an inductive pickup sensor on primary ignition and an automotive Hall-effect sensor on secondary clutch shaft.",
-      "Implemented a Bluetooth Low Energy (BLE) packet sniffing engine to capture 25Hz GPS, heading, velocity, and 3-axis G-forces from an onboard RaceBox Mini.",
-      "Designed and 3D-printed rugged IP-rated protective node enclosures in carbon-fiber reinforced filament in SolidWorks."
+      "Wrote dual-core FreeRTOS firmware dedicating Core 0 to hardware timer interrupts for ignition spark and secondary Hall-effect pickups.",
+      "Implemented BLE packet sniffing algorithms to decode live 25 Hz heading, ground speed, and 3-axis G-forces from an onboard RaceBox Mini.",
+      "Routed custom daughterboard schematics in Altium Designer with noise-filtering bypass networks.",
+      "Designed and rapid-prototyped protective enclosures in SolidWorks using carbon-fiber reinforced PETG."
     ],
     engineeringSpecs: {
-      "Primary Controller": "ESP32 Tensilica Dual-Core (240 MHz)",
-      "Sensors Synchronized": "Inductive spark, Hall-effect gear tooth, RaceBox Mini",
-      "Telemetry Rate": "25 Hz GNSS/IMU + 100 Hz RPM capture",
-      "Firmware Base": "FreeRTOS / ESP-IDF with SPI SD datalogging",
-      "Enclosure": "SolidWorks CAD, Bambu Lab CF-PETG custom casing"
+      "Microcontroller": "ESP32 Dual-Core Tensilica (240 MHz)",
+      "Sampling Rate": "25 Hz GPS/IMU + 100 Hz RPM Pulse Timers",
+      "Sensors": "Inductive Spark Pickup, Hall-Effect, RaceBox Mini",
+      "Enclosure": "SolidWorks CAD, Bambu Lab CF-PETG",
+      "Storage": "SPI High-Speed SD Datalogging with CRC"
     },
     images: [
       { src: "assets/project2/main.png", alt: "Accelerated DAQ Circuit Schematic & Pinout" },
@@ -65,24 +66,24 @@ const projectsData = [
   {
     id: "can-fd-daq",
     category: "daq",
-    title: "Next-Gen 26'/27' CAN FD Vehicle Network",
+    title: "Distributed CAN FD Vehicle Network",
     team: "Texas A&M SAE Baja // Controls & Telemetry",
     timeline: "2026–2027",
-    tags: ["CAN FD Bus", "Altium PCB", "SolidWorks", "Telemetry Logging", "IP67 Enclosures"],
-    summary: "Distributed vehicle-wide sensor network with CAN Flexible Data-Rate (CAN FD) transceivers, custom nodal PCBs, and telemetry acquisition.",
-    problemStatement: "Legacy point-to-point analog wiring bundles suffered from EM noise pickup off the Briggs & Stratton ignition coil and added over 8 lbs of excess vehicle mass.",
+    tags: ["CAN FD Bus", "Altium PCB", "SolidWorks", "IP67 Enclosures", "Strain Gauges"],
+    summary: "High-speed automotive CAN FD vehicle architecture featuring decentralized node enclosures and real-time suspension telemetry logging.",
+    problemStatement: "Analog sensor runs over 8 feet in length picked up EMI noise from the Briggs ignition wire and added unwanted harness weight across the frame.",
     executionHighlights: [
-      "Designed decentralized nodal architecture utilizing high-speed CAN FD bus transceivers with twisted-shielded differential pairs.",
-      "Modeled custom IP67 splash-resistant chassis junction enclosures in SolidWorks with integrated vibration isolators.",
-      "Developed custom Altium Designer PCB daughterboards for low-noise strain gauge instrumentation and analog suspension travel sensors.",
-      "Implemented cyclic redundancy checking (CRC) and priority-based message arbitrations for steering angle, wheel speeds, and brake line pressures."
+      "Engineered distributed bus architecture utilizing CAN FD transceivers operating at 2 Mbps data phase rates.",
+      "Modeled modular IP67 chassis junction node casings in SolidWorks featuring vibration isolators.",
+      "Designed custom Altium Designer PCB modules with low-noise instrumentation amplifiers for quarter-bridge strain gauge sensors.",
+      "Standardized vehicle harness connections with Mil-Spec crimped Deutsch DT sealed connectors."
     ],
     engineeringSpecs: {
       "Protocol": "CAN FD (2 Mbps data phase / 500 kbps arbitration)",
-      "CAD Platform": "SolidWorks 2026 + SolidWorks Visualize",
-      "PCB Layout": "Altium Designer (4-Layer impedance matched)",
-      "Environmental": "IP67 sealed Deutsch DT connector terminations",
-      "Target Channels": "Suspension potentiometers, strain gauges, brake pressure"
+      "PCB Design": "Altium Designer (4-Layer impedance controlled)",
+      "CAD Tool": "SolidWorks 2026 + Visualize 4K",
+      "Connectors": "IP67 Deutsch DT Series",
+      "Channels": "Steering Angle, Suspension Linear Pots, Strain Gauges"
     },
     images: [
       { src: "assets/project3/main.jpg", alt: "Central DAQ Hub Master Enclosure Render" },
@@ -98,23 +99,23 @@ const projectsData = [
   {
     id: "autonomous-rc",
     category: "embedded",
-    title: "Dual-Core Deterministic Telemetry Platform",
+    title: "Dual-Core Telemetry Ground Vehicle",
     team: "Independent Robotics Lab",
     timeline: "2026",
-    tags: ["ESP32", "Embedded C", "UDP Protocol", "FreeRTOS", "SolidWorks"],
-    summary: "Custom remote-operated vehicle platform engineered around hard-real-time dual-core microcontroller scheduling and wireless socket telemetry.",
-    problemStatement: "Standard consumer wireless RC architectures introduce latency spikes and packet dropouts when simultaneously streaming IMU data and PWM drive actuation.",
+    tags: ["ESP32", "Embedded C", "UDP Sockets", "FreeRTOS", "SolidWorks"],
+    summary: "Deterministic remote ground vehicle engineered for high-frequency low-latency teleoperation and continuous telemetry streaming.",
+    problemStatement: "Standard commercial RC controllers exhibited non-deterministic packet delays and lacked synchronized IMU logging for trajectory reconstruction.",
     executionHighlights: [
-      "Separated real-time deterministic tasks: Core 0 handles motor commutation, hardware PWM timers, and fail-safe watchdog timeouts.",
-      "Allocated Core 1 exclusively for high-throughput wireless UDP communication and telemetry packet serialization.",
-      "Progressed from V1 tethered MicroPython prototype to V2 compiled C on FreeRTOS, dropping actuation latency from 85 ms to sub-6 ms.",
-      "Modeled and 3D-printed modular chassis components and vibration-damped battery cradles."
+      "Architected real-time firmware separating motor commutation and PWM capture on Core 0 from wireless UDP packets on Core 1.",
+      "Re-engineered software from high-overhead MicroPython to compiled embedded C on FreeRTOS, dropping latency from 85 ms to sub-6 ms.",
+      "Built safety watchdog routines executing instant motor shutdown upon telemetry packet timeout.",
+      "Designed impact-resistant chassis mounting plates and battery cradles in SolidWorks."
     ],
     engineeringSpecs: {
-      "Latency": "< 6 ms deterministic response over WiFi UDP",
-      "Software Stack": "Bare-Metal C / FreeRTOS Multi-Tasking",
-      "Safety": "Hardware watchdog timer + auto-kill on heartbeat timeout",
-      "Chassis": "Custom 3D-printed PETG high-impact structural modular tub"
+      "Latency": "< 6 ms deterministic loop time",
+      "Firmware": "Bare-Metal Embedded C / FreeRTOS",
+      "Network Protocol": "Non-blocking UDP Sockets",
+      "Safety": "Hardware Watchdog Timer (150 ms cutoff)"
     },
     images: [
       { src: "assets/project4/main.jpg", alt: "Dual-Core Telemetry Vehicle Assembly" },
@@ -127,20 +128,20 @@ const projectsData = [
     title: "Naval Propulsion Mounts & Differential Thrust",
     team: "Texas A&M Naval Design Team",
     timeline: "2025–2026",
-    tags: ["Hydrodynamics", "Differential Thrust", "SolidWorks", "OpenProp", "CFD"],
-    summary: "Hydrodynamically streamlined propulsion brackets and closed-loop differential yaw thrust mixing algorithms for competition autonomous surface craft.",
-    problemStatement: "Traditional mechanical rudder assemblies added parasitic hydrodynamic drag and mechanical complexity in turbulent water entry profiles.",
+    tags: ["OpenProp", "CFD", "Hydrodynamics", "SolidWorks", "Additive Carbon"],
+    summary: "Hydrodynamically streamlined component brackets and differential thrust algorithms developed for autonomous surface marine craft.",
+    problemStatement: "Mechanical rudder appendages created high drag at low displacement speeds and added mechanical failure points in turbulent surface wakes.",
     executionHighlights: [
-      "Modeled hydrodynamic nacelle component brackets in SolidWorks and validated water-flow wake vortex shedding.",
-      "Calculated required torque and motor thrust profiles using OpenProp hydrofoil simulations and MATLAB calculation scripts.",
-      "Implemented twin-esc differential thrust mixing equations for tight-radius low-speed harbor maneuverability without mechanical rudders.",
-      "Fabricated waterproof, marine-grade additive assemblies utilizing carbon-fiber reinforced nylon."
+      "Calculated hydrodynamic foil geometries in OpenProp and MATLAB to eliminate vortex cavitation.",
+      "Modeled low-drag nacelle brackets in SolidWorks and validated flow separations with CFD simulations.",
+      "Configured dual-motor differential yaw control algorithms for rudderless tight-radius heading authority.",
+      "Fabricated waterproof motor assemblies in carbon-fiber reinforced polyamide (PA-CF)."
     ],
     engineeringSpecs: {
-      "Tooling": "SolidWorks CAD, OpenProp, MATLAB, 3D additive manufacturing",
-      "Control Method": "Differential yaw thrust mapping matrix",
-      "Material": "Carbon-Fiber Reinforced Polyamide (PA-CF)",
-      "Hydrodynamics": "Streamlined nacelle with reduced drag coefficient"
+      "Hydrodynamics": "OpenProp Foil Hydrodynamics & MATLAB",
+      "CAD Platform": "SolidWorks 3D Modeling",
+      "Control Method": "Twin-ESC Differential Yaw Thrust Mixing",
+      "Material": "Carbon-Fiber Reinforced Polyamide (PA-CF)"
     },
     images: [
       { src: "assets/project5/main.jpg", alt: "Hydrodynamic Propulsion Mount CAD Assembly" },

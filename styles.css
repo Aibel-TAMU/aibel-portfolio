@@ -1,69 +1,98 @@
-/* CAD & Technical UI Custom Properties */
+/* styles.css */
 :root {
-  --aggie-maroon: #500000;
-  --aggie-glow: #ff3b4e;
-  --surface-border: #2a3444;
+  --pit-neonRed: #ff1e38;
+  --pit-carbon: #0a0d13;
+  --pit-border: #1f2937;
 }
 
-/* Custom Scrollbars */
+/* CRT / Avionics HUD Scanlines Overlay */
+.hud-scanlines {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.03),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.03)
+  );
+  background-size: 100% 3px, 6px 100%;
+}
+
+/* Aerospace Cockpit Grid Pattern */
+.bg-cockpit-grid {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Tech clipped button edge */
+.clip-edge {
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+}
+
+/* Custom Avionics Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #07090c;
+  background: #05070a;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e2633;
-  border-radius: 4px;
-  border: 1px solid #2a3444;
+  background: #1f2937;
+  border: 1px solid #374151;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #500000;
+  background: #ff1e38;
 }
 
-/* CAD Grid Crosshairs */
-.cad-crosshair {
+/* MFD Card Corner Reticles */
+.mfd-card {
   position: relative;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
-.cad-crosshair::before,
-.cad-crosshair::after {
-  content: '';
+.mfd-card::before {
+  content: "";
   position: absolute;
-  pointer-events: none;
+  top: -1px;
+  left: -1px;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid #ff1e38;
+  border-left: 2px solid #ff1e38;
+  z-index: 2;
+}
+.mfd-card::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-bottom: 2px solid #ff1e38;
+  border-right: 2px solid #ff1e38;
+  z-index: 2;
+}
+.mfd-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 30, 56, 0.6);
+  box-shadow: 0 15px 35px -10px rgba(255, 30, 56, 0.25);
 }
 
-/* Card Glow Effect on Hover */
-.project-card-container {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
-}
-.project-card-container:hover {
-  transform: translateY(-4px);
-  border-color: rgba(142, 22, 32, 0.7);
-  box-shadow: 0 20px 40px -15px rgba(80, 0, 0, 0.45);
-}
-
-/* Monospace telemetry data styling */
-.telemetry-row:nth-child(even) {
-  background-color: rgba(255, 255, 255, 0.02);
-}
-
-/* Lightbox Modal Animation */
+/* Modal Open Visibility */
 #inspector-modal.active {
   display: flex !important;
   opacity: 1 !important;
 }
 
-/* Smooth Tab Fade */
-.tab-pane {
-  display: none;
-  animation: fadeIn 0.25s ease-in-out forwards;
+/* Tachometer LED Segments */
+.tach-led {
+  opacity: 0.25;
+  transition: opacity 0.1s ease;
 }
-.tab-pane.active {
-  display: block;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+.tach-led.active {
+  opacity: 1 !important;
+  box-shadow: 0 0 6px currentColor;
 }
