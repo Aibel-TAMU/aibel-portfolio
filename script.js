@@ -1,327 +1,747 @@
-/**
- * AIBEL.ENGINEER — RUNTIME ENGINE
- * Precision altitude particle engine, scrambler resolver, card physics, magnetic nodes.
- */
+let modalActiveProjectIndex = 0;
+let modalActiveImageIndex = 0;
+let activeProjectCategory = 'all';
 
-(function () {
-  'use strict';
+// Telemetry State
+let telemetryTime = 0.0;
+let isTelemetryPlaying = true;
+let telemetrySpeedMultiplier = 1.0;
+let telemetryAnimFrame = null;
+const TELEMETRY_DURATION = 12.0;
 
-  // State
-  const state = {
-    mouse: { x: window.innerWidth / 2, y: window.innerHeight / 2, targetX: window.innerWidth / 2, targetY: window.innerHeight / 2 },
-    scroll: { current: window.scrollY, velocity: 0, last: window.scrollY },
-    isTabVisible: true,
-    reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-    isTouch: window.matchMedia('(pointer: coarse)').matches
-  };
+document.addEventListener('DOMContentLoaded', function() {
+  initStarfieldEngine();
+  initLucide();
+  renderContinuousProjectsFeed();
+  initScrollAnimations();
+  initScrollProgress();
+  initMissionClock();
+  initTelemetryEngine();
+  setupKeyboardShortcuts();
+});
 
-  /* --------------------------------------------------------------------------
-     1. ALTITUDE STARFIELD ENGINE (60FPS Capped Physics)
-     -------------------------------------------------------------------------- */
-  function initStarfield() {
-    const canvas = document.getElementById('starfield');
-    if (!canvas) return;
+function initLucide() {
+  if (window.lucide && typeof window.lucide.createIcons === 'function') {
+    window.lucide.createIcons();
+  }
+}
 
-    const ctx = canvas.getContext('2d');
-    let width = 0;
-    let height = 0;
-    let particles = [];
-    let animationFrameId = null;
+// 1. DYNAMIC PITCH BLACK STARFIELD & WHITE SPARK PARTICLE ENGINE
+function initStarfieldEngine() {
+  const canvas = document.getElementById('starfield-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
 
-    // Mobile check to thin particle budget
-    const particleBudget = window.innerWidth < 768 ? 70 : 180;
+  let width = (canvas.width = window.innerWidth);
+  let height = (canvas.height = window.innerHeight);
 
-    function resize() {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width * window.devicePixelRatio;
-      canvas.height = height * window.devicePixelRatio;
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-    }
+  window.addEventListener('resize', function() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+    initParticles();
+  });
 
-    function createParticle() {
-      return {
+  let mouse = { x: -1000, y: -1000 };
+  window.addEventListener('mousemove', function(e) {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  let stars = [];
+  let sparks = [];
+  let shootingStars = [];
+
+  const STAR_COUNT = Math.floor((width * height) / 4500);
+  const SPARK_COUNT = Math.floor((width * height) / 14000);
+
+  function initParticles() {
+    stars = [];
+    for (let i = 0; i < STAR_COUNT; i++) {
+      stars.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        baseZ: Math.random() * 0.8 + 0.2, // Depth factor
-        radius: Math.random() * 1.1 + 0.3,
-        alpha: Math.random() * 0.6 + 0.2,
-        twinkleSpeed: (Math.random() * 0.015 + 0.005) * (Math.random() > 0.5 ? 1 : -1),
-        driftX: (Math.random() - 0.5) * 0.15,
-        driftY: -(Math.random() * 0.25 + 0.05)
-      };
+        size: Math.random() * 1.2 + 0.3,
+        alpha: Math.random() * 0.7 + 0.2,
+        twinkleSpeed: Math.random() * 0.025 + 0.005,
+        twinklePhase: Math.random() * Math.PI * 2
+      });
     }
 
-    function buildUniverse() {
-      particles = [];
-      for (let i = 0; i < particleBudget; i++) {
-        particles.push(createParticle());
-      }
+    sparks = [];
+    for (let i = 0; i < SPARK_COUNT; i++) {
+      sparks.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.45,
+        vy: (Math.random() - 0.5) * 0.45,
+        size: Math.random() * 1.8 + 0.8,
+        pulse: Math.random() * Math.PI * 2,
+        color: Math.random() > 0.85 ? '#38bdf8' : '#ffffff'
+      });
+    }
+  }
+
+  function spawnShootingStar() {
+    if (Math.random() < 0.008 && shootingStars.length < 2) {
+      shootingStars.push({
+        x: Math.random() * width,
+        y: Math.random() * (height * 0.4),
+        length: Math.random() * 90 + 50,
+        speed: Math.random() * 12 + 10,
+        angle: (Math.PI / 4) + (Math.random() - 0.5) * 0.2,
+        opacity: 1.0,
+        decay: Math.random() * 0.02 + 0.015
+      });
+    }
+  }
+
+  initParticles();
+
+  function render() {
+    // Pure pitch-black clear
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, width, height);
+
+    // Stars
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
+      s.twinklePhase += s.twinkleSpeed;
+      const currentAlpha = Math.max(0.1, s.alpha + Math.sin(s.twinklePhase) * 0.35);
+
+      ctx.fillStyle = 'rgba(255, 255, 255, ' + currentAlpha + ')';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+      ctx.fill();
     }
 
-    function tick() {
-      if (!state.isTabVisible || state.reducedMotion) {
-        animationFrameId = requestAnimationFrame(tick);
-        return;
+    // Drifting Sparks with mouse proximity repulsion
+    for (let i = 0; i < sparks.length; i++) {
+      const sp = sparks[i];
+
+      const dx = mouse.x - sp.x;
+      const dy = mouse.y - sp.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 140) {
+        const force = (140 - dist) / 140;
+        sp.x -= (dx / dist) * force * 1.5;
+        sp.y -= (dy / dist) * force * 1.5;
       }
 
-      ctx.clearRect(0, 0, width, height);
+      sp.x += sp.vx;
+      sp.y += sp.vy;
+      sp.pulse += 0.04;
 
-      // Mouse Parallax Damping
-      const mouseOffsetX = (state.mouse.x / width - 0.5) * 40;
-      const mouseOffsetY = (state.mouse.y / height - 0.5) * 40;
+      if (sp.x < 0) sp.x = width;
+      if (sp.x > width) sp.x = 0;
+      if (sp.y < 0) sp.y = height;
+      if (sp.y > height) sp.y = 0;
 
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
+      const dynamicAlpha = 0.5 + Math.sin(sp.pulse) * 0.45;
+      ctx.fillStyle = sp.color === '#ffffff' 
+        ? 'rgba(255, 255, 255, ' + dynamicAlpha + ')' 
+        : 'rgba(56, 189, 248, ' + dynamicAlpha + ')';
 
-        // Cosmic Drift
-        p.x += p.driftX;
-        p.y += p.driftY;
-
-        // Twinkle
-        p.alpha += p.twinkleSpeed;
-        if (p.alpha > 0.85 || p.alpha < 0.15) {
-          p.twinkleSpeed = -p.twinkleSpeed;
-        }
-
-        // Boundary Wrapping
-        if (p.x < 0) p.x = width;
-        if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height;
-        if (p.y > height) p.y = 0;
-
-        // Depth projection
-        const renderX = p.x + mouseOffsetX * p.baseZ;
-        const renderY = p.y + mouseOffsetY * p.baseZ;
-
-        ctx.beginPath();
-        ctx.arc(renderX, renderY, p.radius * p.baseZ, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0, Math.min(1, p.alpha))})`;
-        ctx.fill();
-      }
-
-      animationFrameId = requestAnimationFrame(tick);
+      ctx.shadowBlur = 6;
+      ctx.shadowColor = sp.color;
+      ctx.beginPath();
+      ctx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
     }
 
-    window.addEventListener('resize', () => {
-      resize();
-      buildUniverse();
-    }, { passive: true });
+    // Shooting Stars
+    spawnShootingStar();
+    for (let i = shootingStars.length - 1; i >= 0; i--) {
+      const ss = shootingStars[i];
+      ss.x += Math.cos(ss.angle) * ss.speed;
+      ss.y += Math.sin(ss.angle) * ss.speed;
+      ss.opacity -= ss.decay;
 
-    document.addEventListener('visibilitychange', () => {
-      state.isTabVisible = !document.hidden;
-    });
-
-    resize();
-    buildUniverse();
-    tick();
-  }
-
-  /* --------------------------------------------------------------------------
-     2. NAME RESOLVER (System Boot Scramble Effect)
-     -------------------------------------------------------------------------- */
-  function initScramble() {
-    const el = document.getElementById('scramble-name');
-    if (!el || state.reducedMotion) return;
-
-    const targetText = el.getAttribute('data-value') || 'AIBEL JOMON';
-    const glyphs = '0123456789ABCDEF_//-[]<>';
-    let iteration = 0;
-    const maxIterations = targetText.length * 4;
-
-    const interval = setInterval(() => {
-      el.textContent = targetText
-        .split('')
-        .map((char, index) => {
-          if (char === ' ') return ' ';
-          if (index < iteration / 4) return targetText[index];
-          return glyphs[Math.floor(Math.random() * glyphs.length)];
-        })
-        .join('');
-
-      iteration++;
-      if (iteration >= maxIterations) {
-        el.textContent = targetText;
-        clearInterval(interval);
+      if (ss.opacity <= 0 || ss.x > width || ss.y > height) {
+        shootingStars.splice(i, 1);
+        continue;
       }
-    }, 28);
-  }
 
-  /* --------------------------------------------------------------------------
-     3. RETICLE CURSOR & MAGNETIC NODES
-     -------------------------------------------------------------------------- */
-  function initCursor() {
-    if (state.isTouch || state.reducedMotion) return;
+      const tailX = ss.x - Math.cos(ss.angle) * ss.length;
+      const tailY = ss.y - Math.sin(ss.angle) * ss.length;
 
-    const dot = document.getElementById('cursor-dot');
-    const reticle = document.getElementById('cursor-reticle');
-    if (!dot || !reticle) return;
+      const grad = ctx.createLinearGradient(tailX, tailY, ss.x, ss.y);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+      grad.addColorStop(1, 'rgba(255, 255, 255, ' + ss.opacity + ')');
 
-    let reticleX = window.innerWidth / 2;
-    let reticleY = window.innerHeight / 2;
-
-    window.addEventListener('mousemove', (e) => {
-      state.mouse.targetX = e.clientX;
-      state.mouse.targetY = e.clientY;
-      dot.style.left = `${e.clientX}px`;
-      dot.style.top = `${e.clientY}px`;
-    }, { passive: true });
-
-    function renderCursor() {
-      // Lerp reticle behind dot
-      reticleX += (state.mouse.targetX - reticleX) * 0.18;
-      reticleY += (state.mouse.targetY - reticleY) * 0.18;
-      state.mouse.x = reticleX;
-      state.mouse.y = reticleY;
-
-      reticle.style.left = `${reticleX}px`;
-      reticle.style.top = `${reticleY}px`;
-
-      requestAnimationFrame(renderCursor);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(tailX, tailY);
+      ctx.lineTo(ss.x, ss.y);
+      ctx.stroke();
     }
-    renderCursor();
 
-    // Hover Target Expansion
-    const targets = document.querySelectorAll('a, button, [data-magnetic], .project-card, .focus-cell');
-    targets.forEach((target) => {
-      target.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
-      target.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
-    });
-
-    // Magnetic Node Pull
-    const magneticElements = document.querySelectorAll('[data-magnetic]');
-    magneticElements.forEach((el) => {
-      el.addEventListener('mousemove', (e) => {
-        const rect = el.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const pullX = (e.clientX - centerX) * 0.28;
-        const pullY = (e.clientY - centerY) * 0.28;
-        el.style.transform = `translate(${pullX}px, ${pullY}px)`;
-      });
-
-      el.addEventListener('mouseleave', () => {
-        el.style.transform = 'translate(0px, 0px)';
-      });
-    });
+    requestAnimationFrame(render);
   }
 
-  /* --------------------------------------------------------------------------
-     4. CARD TILT & SPECULAR SHINE ENGINE
-     -------------------------------------------------------------------------- */
-  function initCardPhysics() {
-    if (state.isTouch || state.reducedMotion) return;
+  requestAnimationFrame(render);
+}
 
-    const cards = document.querySelectorAll('[data-tilt]');
-    cards.forEach((card) => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        // Set CSS variables for radial specular shine
-        card.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
-        card.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
-
-        // Subtle mechanical deflection
-        const rotateX = ((y / rect.height) - 0.5) * -6;
-        const rotateY = ((x / rect.width) - 0.5) * 6;
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.005, 1.005, 1.005)`;
-      });
-
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-      });
-    });
+// 2. LIVE MISSION TIME & SCROLL PROGRESS
+function initMissionClock() {
+  const clockEl = document.getElementById('mission-clock');
+  if (!clockEl) return;
+  function update() {
+    const now = new Date();
+    clockEl.textContent = now.toISOString().substring(11, 19) + ' UTC';
   }
+  update();
+  setInterval(update, 1000);
+}
 
-  /* --------------------------------------------------------------------------
-     5. DYNAMIC PROJECT GRID & FILTER DISPATCH
-     -------------------------------------------------------------------------- */
-  function renderProjects(activeTag = 'all') {
-    const grid = document.getElementById('projects-grid');
-    if (!grid || !Array.isArray(window.projectsData)) return;
-
-    const filtered = activeTag === 'all'
-      ? window.projectsData
-      : window.projectsData.filter((p) => p.category.toLowerCase() === activeTag.toLowerCase());
-
-    grid.innerHTML = filtered.map((project) => {
-      const tagsHtml = project.tags.map((t) => `<span class="project-tag font-mono">${t}</span>`).join('');
-      const linkHtml = project.link
-        ? `<a href="${project.link}" target="_blank" rel="noopener noreferrer" class="project-link font-mono" data-magnetic><span>INSPECT UNIT</span><span class="arrow-glyph">↗</span></a>`
-        : `<span class="project-link font-mono" style="color: var(--text-dim);">INTERNAL FIELD RECORD</span>`;
-
-      return `
-        <article class="project-card" data-tilt data-category="${project.category}">
-          <div>
-            <div class="project-meta-strip font-mono">
-              <span class="project-id">${project.id.toUpperCase()}</span>
-              <span class="project-team">${project.team.toUpperCase()}</span>
-            </div>
-            <h3 class="project-title">${project.title}</h3>
-            <p class="project-impact font-mono">${project.impact}</p>
-          </div>
-          <div class="project-footer">
-            <div class="project-tags">${tagsHtml}</div>
-            ${linkHtml}
-          </div>
-        </article>
-      `;
-    }).join('');
-
-    initCardPhysics();
-    initCursor();
-  }
-
-  function initFilters() {
-    const filterButtons = document.querySelectorAll('.filter-pill');
-    filterButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        filterButtons.forEach((b) => {
-          b.classList.remove('is-active');
-          b.setAttribute('aria-selected', 'false');
-        });
-        btn.classList.add('is-active');
-        btn.setAttribute('aria-selected', 'true');
-        const filter = btn.getAttribute('data-filter') || 'all';
-        renderProjects(filter);
-      });
-    });
-  }
-
-  /* --------------------------------------------------------------------------
-     6. CLIPBOARD DISPATCH & TOAST SYSTEM
-     -------------------------------------------------------------------------- */
-  function initClipboard() {
-    const btn = document.getElementById('copy-email-btn');
-    const toast = document.getElementById('toast');
-    if (!btn || !toast) return;
-
-    btn.addEventListener('click', () => {
-      const email = btn.getAttribute('data-email') || 'aibel@tamu.edu';
-      navigator.clipboard.writeText(email).then(() => {
-        toast.textContent = `[ COPIED: ${email} // COMMS READY ]`;
-        toast.classList.add('is-active');
-        toast.setAttribute('aria-hidden', 'false');
-
-        setTimeout(() => {
-          toast.classList.remove('is-active');
-          toast.setAttribute('aria-hidden', 'true');
-        }, 3200);
-      });
-    });
-  }
-
-  /* --------------------------------------------------------------------------
-     7. INITIALIZATION BOOTSTRAP
-     -------------------------------------------------------------------------- */
-  document.addEventListener('DOMContentLoaded', () => {
-    initStarfield();
-    initScramble();
-    initCursor();
-    renderProjects('all');
-    initFilters();
-    initClipboard();
+function initScrollProgress() {
+  const bar = document.getElementById('scroll-progress-bar');
+  if (!bar) return;
+  window.addEventListener('scroll', function() {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = total > 0 ? (window.scrollY / total) * 100 : 0;
+    bar.style.width = progress + '%';
   });
-})();
+}
+
+// 3. IMAGE ERROR FALLBACK HANDLER
+window.handleImgError = function(img) {
+  img.onerror = null;
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><rect width="100%" height="100%" fill="#000000"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#475569" font-family="monospace" font-size="16">CAD SPECIFICATION SCHEMATIC // RECORD SYNCED</text></svg>'
+  );
+};
+
+// 4. INLINE PROJECT CARD SLIDE SWITCHER
+window.switchProjectCardSlide = function(pIdx, slideIdx) {
+  const source = window.projectsData;
+  if (!Array.isArray(source) || !source[pIdx]) return;
+  const project = source[pIdx];
+  if (!project.images || !project.images[slideIdx]) return;
+
+  const mainImg = document.getElementById('card-img-' + project.id);
+  const captionEl = document.getElementById('card-caption-' + project.id);
+  const counterEl = document.getElementById('card-counter-' + project.id);
+
+  if (mainImg) {
+    mainImg.src = project.images[slideIdx].src;
+    mainImg.alt = project.images[slideIdx].alt;
+  }
+  if (captionEl) {
+    captionEl.textContent = project.images[slideIdx].alt || 'Blueprint Spec';
+  }
+  if (counterEl) {
+    counterEl.textContent = 'SLIDE ' + (slideIdx + 1) + ' OF ' + project.images.length;
+  }
+
+  const thumbs = document.querySelectorAll('.card-thumb-' + project.id);
+  thumbs.forEach(function(btn, idx) {
+    if (idx === slideIdx) {
+      btn.className = 'card-thumb-' + project.id + ' w-12 h-9 border shrink-0 overflow-hidden bg-black transition-all border-cold-pure ring-1 ring-cold-pure scale-105';
+    } else {
+      btn.className = 'card-thumb-' + project.id + ' w-12 h-9 border shrink-0 overflow-hidden bg-black transition-all border-cold-border opacity-50 hover:opacity-100';
+    }
+  });
+};
+
+// 5. PROJECT CATEGORY FILTER & FEED GENERATION
+window.setProjectFilter = function(category) {
+  activeProjectCategory = category;
+  document.querySelectorAll('.project-filter-btn').forEach(function(btn) {
+    if (btn.getAttribute('data-filter') === category) {
+      btn.className = 'project-filter-btn px-3 py-1.5 bg-cold-pure text-black font-bold transition-all';
+    } else {
+      btn.className = 'project-filter-btn px-3 py-1.5 text-cold-slate hover:text-cold-pure transition-all';
+    }
+  });
+  renderContinuousProjectsFeed();
+};
+
+function renderContinuousProjectsFeed() {
+  const container = document.getElementById('projects-feed-container');
+  const source = window.projectsData;
+  if (!container || !Array.isArray(source)) return;
+
+  const filtered = activeProjectCategory === 'all'
+    ? source
+    : source.filter(function(p) { return p.category === activeProjectCategory; });
+
+  let html = '';
+  for (let pIdx = 0; pIdx < filtered.length; pIdx++) {
+    const project = filtered[pIdx];
+    const realIdx = source.indexOf(project);
+    const mainImg = (project.images && project.images[0]) ? project.images[0] : { src: '', alt: 'CAD Schematic' };
+    const allImages = project.images || [];
+    const tags = Array.isArray(project.tags) ? project.tags : [];
+    const executionHighlights = Array.isArray(project.executionHighlights) ? project.executionHighlights : [];
+    const specs = project.engineeringSpecs ? Object.entries(project.engineeringSpecs) : [];
+
+    let tagsHtml = '';
+    for (let t = 0; t < tags.length; t++) {
+      tagsHtml += '<span class="px-2.5 py-1 bg-black border border-cold-border text-cold-slate font-mono text-[11px]">' + tags[t] + '</span>';
+    }
+
+    let highlightsHtml = '';
+    for (let h = 0; h < executionHighlights.length; h++) {
+      highlightsHtml += '<li class="flex items-start gap-2.5 p-3 bg-black border border-cold-border/60">' +
+        '<span class="text-cold-safety font-mono font-bold mt-0.5">›</span>' +
+        '<span class="text-xs sm:text-sm text-cold-slate font-sans leading-relaxed">' + executionHighlights[h] + '</span>' +
+        '</li>';
+    }
+
+    let specsHtml = '';
+    for (let s = 0; s < specs.length; s++) {
+      specsHtml += '<div class="flex justify-between items-center py-2 border-b border-cold-border/40 font-mono text-xs">' +
+        '<span class="text-cold-subtle text-[11px] uppercase">' + specs[s][0] + ':</span>' +
+        '<span class="text-cold-pure font-semibold text-right text-[11px]">' + specs[s][1] + '</span>' +
+        '</div>';
+    }
+
+    let thumbnailRibbonHtml = '';
+    for (let imgIdx = 0; imgIdx < allImages.length; imgIdx++) {
+      const isSelected = imgIdx === 0;
+      const borderClass = isSelected
+        ? 'border-cold-pure ring-1 ring-cold-pure scale-105'
+        : 'border-cold-border opacity-50 hover:opacity-100';
+
+      thumbnailRibbonHtml += '<button onclick="window.switchProjectCardSlide(' + realIdx + ', ' + imgIdx + ')" class="card-thumb-' + project.id + ' w-12 h-9 border shrink-0 overflow-hidden bg-black transition-all ' + borderClass + '" title="' + (allImages[imgIdx].alt || 'Slide') + '">' +
+        '<img src="' + allImages[imgIdx].src + '" alt="' + (allImages[imgIdx].alt || 'Thumbnail') + '" class="w-full h-full object-contain" onerror="window.handleImgError(this)">' +
+        '</button>';
+    }
+
+    html += '<article class="pop-in bg-black border border-cold-border p-6 sm:p-10 shadow-[0_0_30px_rgba(0,0,0,0.9)] backdrop-blur-md relative" id="unit-' + project.id + '">' +
+      
+      '<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 mb-8 border-b border-cold-border">' +
+        '<div>' +
+          '<div class="flex items-center gap-3 font-mono text-xs text-cold-subtle mb-2">' +
+            '<span class="px-2 py-0.5 bg-black border border-cold-border text-cold-safety font-bold text-xs tracking-wider">UNIT 0' + (pIdx + 1) + '</span>' +
+            '<span>//</span>' +
+            '<span class="uppercase tracking-wider">' + (project.team || 'TAMU ENGINEERING') + '</span>' +
+            '<span>//</span>' +
+            '<span class="text-cold-slate">' + (project.timeline || '2026') + '</span>' +
+          '</div>' +
+          '<h3 class="text-3xl sm:text-5xl font-display font-extrabold text-cold-pure uppercase tracking-tight">' +
+            (project.title || 'Subsystem Build') +
+          '</h3>' +
+        '</div>' +
+
+        '<div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0">' +
+          '<span class="px-3 py-1 bg-black border border-cold-border text-cold-ice font-mono text-xs font-bold">' +
+            (project.statusBadge || 'FIELD VALIDATED') +
+          '</span>' +
+          '<div class="flex flex-wrap gap-1.5">' + tagsHtml + '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">' +
+        
+        '<div class="lg:col-span-7 space-y-3">' +
+          '<div class="image-zoom-box w-full aspect-[16/10] bg-black border border-cold-border cursor-pointer group relative overflow-hidden" onclick="window.openInspectorModal(' + realIdx + ', 0)">' +
+            '<img id="card-img-' + project.id + '" src="' + mainImg.src + '" alt="' + (mainImg.alt || 'CAD Hero Model') + '" class="w-full h-full object-contain p-4 sm:p-6" onerror="window.handleImgError(this)">' +
+            
+            '<div class="absolute top-3 left-3 px-2.5 py-1 bg-black/90 border border-cold-border text-cold-ice font-mono text-[10px] font-bold flex items-center gap-1.5">' +
+              '<span class="w-2 h-2 rounded-full bg-cold-ice animate-pulse"></span>' +
+              '<span id="card-counter-' + project.id + '">SLIDE 1 OF ' + allImages.length + '</span>' +
+            '</div>' +
+
+            '<div class="absolute top-3 right-3 px-2.5 py-1 bg-black/90 border border-cold-border text-cold-pure font-mono text-[10px] font-bold flex items-center gap-1.5">' +
+              '<i data-lucide="maximize-2" class="w-3.5 h-3.5 text-cold-safety"></i>' +
+              '<span>FULLSCREEN</span>' +
+            '</div>' +
+
+            '<div class="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black via-black/80 to-transparent flex items-center justify-between font-mono text-xs text-cold-pure">' +
+              '<span id="card-caption-' + project.id + '" class="truncate pr-4 text-[11px] text-cold-slate">' + (mainImg.alt || 'CAD Model View') + '</span>' +
+              '<span class="text-cold-subtle text-[10px] shrink-0 font-bold">CLICK TO INSPECT</span>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="flex items-center gap-2 overflow-x-auto p-2 bg-black border border-cold-border">' +
+            '<span class="font-mono text-[9px] text-cold-subtle uppercase tracking-wider shrink-0 mr-1">SLIDES:</span>' +
+            thumbnailRibbonHtml +
+          '</div>' +
+        '</div>' +
+
+        '<div class="lg:col-span-5 space-y-6">' +
+          
+          '<div>' +
+            '<span class="font-mono text-[10px] text-cold-safety font-bold uppercase tracking-wider block mb-1.5">SUBSYSTEM OBJECTIVE</span>' +
+            '<p class="text-sm sm:text-base text-cold-slate font-sans leading-relaxed">' + (project.summary || '') + '</p>' +
+          '</div>' +
+
+          '<div class="space-y-2">' +
+            '<span class="font-mono text-[10px] text-cold-safety font-bold uppercase tracking-wider block">KEY EXECUTION &amp; ANALYSIS</span>' +
+            '<ul class="space-y-2">' + highlightsHtml + '</ul>' +
+          '</div>' +
+
+          '<div class="p-4 bg-black border border-cold-border space-y-1">' +
+            '<div class="flex items-center justify-between border-b border-cold-border pb-2 mb-1 font-mono text-xs">' +
+              '<span class="text-cold-pure font-bold flex items-center gap-1.5">' +
+                '<i data-lucide="cpu" class="w-3.5 h-3.5 text-cold-safety"></i>' +
+                '<span>ENGINEERING BENCHMARKS</span>' +
+              '</span>' +
+              '<span class="text-[9px] text-emerald-400 font-bold">AUTHENTICATED</span>' +
+            '</div>' +
+            specsHtml +
+          '</div>' +
+
+        '</div>' +
+
+      '</div>' +
+
+    '</article>';
+  }
+
+  container.innerHTML = html;
+  initLucide();
+  initScrollAnimations();
+}
+
+// 6. SCROLL POP-IN & NUMBER COUNTER ANIMATIONS
+function initScrollAnimations() {
+  const elements = document.querySelectorAll('.pop-in');
+
+  const observer = new IntersectionObserver(function(entries, obs) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+
+        const counters = entry.target.querySelectorAll('.counter');
+        counters.forEach(function(counter) { animateCounter(counter); });
+
+        obs.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.08,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  elements.forEach(function(el) { observer.observe(el); });
+}
+
+function animateCounter(el) {
+  const target = parseFloat(el.getAttribute('data-target'));
+  if (isNaN(target)) return;
+  const decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+  const duration = 1400;
+  const start = 0;
+  const startTime = performance.now();
+
+  function update(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+    const current = start + (target - start) * ease;
+
+    el.textContent = current.toFixed(decimals);
+
+    if (progress < 1) {
+      requestAnimationFrame(update);
+    } else {
+      el.textContent = target.toFixed(decimals);
+    }
+  }
+
+  requestAnimationFrame(update);
+}
+
+// 7. G-G FRICTION CIRCLE ENGINE (CHASSIS TELEMETRY REPLAY)
+function getTelemetrySample(t) {
+  let longG = 0;
+  if (t < 2.5) {
+    longG = 0.85 * (1 - t / 3.0);
+  } else if (t > 10.5) {
+    longG = -1.15;
+  } else {
+    longG = -0.15 * Math.sin(t * 2.5);
+  }
+
+  let latG = 0;
+  if (t >= 3.0 && t <= 10.5) {
+    latG = 1.35 * Math.sin((t - 3.0) * 1.45);
+  }
+
+  const totalG = Math.sqrt(latG * latG + longG * longG).toFixed(2);
+  return { t: t, latG: latG, longG: longG, totalG: totalG };
+}
+
+function initTelemetryEngine() {
+  const scrubber = document.getElementById('telemetry-scrubber');
+  if (scrubber) {
+    scrubber.addEventListener('input', function(e) {
+      telemetryTime = parseFloat(e.target.value);
+      if (isTelemetryPlaying) window.toggleTelemetryPlayback();
+      updateTelemetryUI();
+    });
+  }
+  startTelemetry();
+}
+
+window.setTelemetrySpeed = function(multiplier) {
+  telemetrySpeedMultiplier = multiplier;
+  document.querySelectorAll('.telemetry-speed-btn').forEach(function(btn) {
+    if (parseFloat(btn.getAttribute('data-speed')) === multiplier) {
+      btn.className = 'telemetry-speed-btn px-2 py-1.5 border border-cold-border bg-black text-cold-pure font-bold';
+    } else {
+      btn.className = 'telemetry-speed-btn px-2 py-1.5 border border-cold-border text-cold-slate hover:text-cold-pure';
+    }
+  });
+};
+
+window.toggleTelemetryPlayback = function() {
+  if (isTelemetryPlaying) pauseTelemetry();
+  else startTelemetry();
+};
+
+function updatePlayButtonDisplay(playing) {
+  const btn = document.getElementById('telemetry-play-btn');
+  if (!btn) return;
+  btn.innerHTML = playing
+    ? '<i data-lucide="pause" class="w-3.5 h-3.5"></i><span>PAUSE</span>'
+    : '<i data-lucide="play" class="w-3.5 h-3.5"></i><span>PLAY RUN</span>';
+  initLucide();
+}
+
+function startTelemetry() {
+  isTelemetryPlaying = true;
+  updatePlayButtonDisplay(true);
+
+  let lastTimestamp = performance.now();
+
+  function loop(now) {
+    if (!isTelemetryPlaying) return;
+    const delta = Math.min((now - lastTimestamp) / 1000, 0.1) * telemetrySpeedMultiplier;
+    lastTimestamp = now;
+
+    telemetryTime += delta;
+    if (telemetryTime >= TELEMETRY_DURATION) telemetryTime = 0;
+
+    const scrubber = document.getElementById('telemetry-scrubber');
+    if (scrubber) scrubber.value = telemetryTime;
+
+    updateTelemetryUI();
+    telemetryAnimFrame = requestAnimationFrame(loop);
+  }
+
+  telemetryAnimFrame = requestAnimationFrame(loop);
+}
+
+function pauseTelemetry() {
+  isTelemetryPlaying = false;
+  if (telemetryAnimFrame) cancelAnimationFrame(telemetryAnimFrame);
+  updatePlayButtonDisplay(false);
+}
+
+function updateTelemetryUI() {
+  const sample = getTelemetrySample(telemetryTime);
+
+  const timeEl = document.getElementById('telemetry-time-readout');
+  const gTotalEl = document.getElementById('friction-g-total');
+  const latGEl = document.getElementById('friction-lat-g');
+  const longGEl = document.getElementById('friction-long-g');
+
+  if (timeEl) timeEl.textContent = telemetryTime.toFixed(2) + 's';
+  if (gTotalEl) gTotalEl.textContent = sample.totalG + ' G';
+  if (latGEl) latGEl.textContent = (sample.latG >= 0 ? '+' : '') + sample.latG.toFixed(2) + ' G';
+  if (longGEl) longGEl.textContent = (sample.longG >= 0 ? '+' : '') + sample.longG.toFixed(2) + ' G';
+
+  renderFrictionCircleCanvas(sample);
+}
+
+function renderFrictionCircleCanvas(currentSample) {
+  const canvas = document.getElementById('friction-circle-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const w = canvas.width;
+  const h = canvas.height;
+  const cx = w / 2;
+  const cy = h / 2;
+  const radius = cx - 28;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Concentric boundary rings (0.5G, 1.0G, 1.6G limit)
+  ctx.strokeStyle = '#161f30';
+  ctx.lineWidth = 1.5;
+  [0.33, 0.66, 1.0].forEach(function(r) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius * r, 0, Math.PI * 2);
+    ctx.stroke();
+  });
+
+  // Crosshairs
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - radius);
+  ctx.lineTo(cx, cy + radius);
+  ctx.moveTo(cx - radius, cy);
+  ctx.lineTo(cx + radius, cy);
+  ctx.stroke();
+
+  // Historic scatter trail
+  const trailCount = 20;
+  for (let i = trailCount; i >= 1; i--) {
+    const pastT = Math.max(0, telemetryTime - (i * 0.05));
+    const s = getTelemetrySample(pastT);
+    const alpha = (1 - (i / trailCount)) * 0.6;
+    const px = cx + (s.latG / 1.6) * radius;
+    const py = cy - (s.longG / 1.6) * radius;
+
+    ctx.fillStyle = 'rgba(255, 77, 0, ' + alpha + ')';
+    ctx.beginPath();
+    ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Active vector line
+  const curX = cx + (currentSample.latG / 1.6) * radius;
+  const curY = cy - (currentSample.longG / 1.6) * radius;
+
+  ctx.strokeStyle = 'rgba(255, 77, 0, 0.8)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(curX, curY);
+  ctx.stroke();
+
+  // Active puck
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(curX, curY, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#ff4d00';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+}
+
+// 8. FULLSCREEN BLUEPRINT LIGHTBOX MODAL
+window.openInspectorModal = function(pIdx, iIdx) {
+  if (typeof iIdx === 'undefined') iIdx = 0;
+  const source = window.projectsData;
+  if (!Array.isArray(source) || !source[pIdx]) return;
+
+  modalActiveProjectIndex = pIdx;
+  modalActiveImageIndex = iIdx;
+
+  const modal = document.getElementById('inspector-modal');
+  if (!modal) return;
+
+  updateModalView();
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  initLucide();
+};
+
+window.closeInspectorModal = function() {
+  const modal = document.getElementById('inspector-modal');
+  if (!modal) return;
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+};
+
+function updateModalView() {
+  const source = window.projectsData;
+  if (!Array.isArray(source)) return;
+  const p = source[modalActiveProjectIndex];
+  if (!p || !p.images || !p.images.length) return;
+
+  if (modalActiveImageIndex >= p.images.length) modalActiveImageIndex = 0;
+  if (modalActiveImageIndex < 0) modalActiveImageIndex = p.images.length - 1;
+
+  const currentImg = p.images[modalActiveImageIndex];
+  const activeImgEl = document.getElementById('modal-active-img');
+  const titleEl = document.getElementById('modal-project-title');
+  const counterEl = document.getElementById('modal-image-counter');
+  const captionEl = document.getElementById('modal-caption');
+  const thumbStrip = document.getElementById('modal-thumb-strip');
+
+  if (titleEl) titleEl.textContent = p.title + ' // CAD BLUEPRINT';
+  if (counterEl) counterEl.textContent = 'SLIDE ' + (modalActiveImageIndex + 1) + ' OF ' + p.images.length;
+  if (captionEl) captionEl.textContent = currentImg.alt || "CAD Specification Blueprint";
+
+  if (activeImgEl) {
+    activeImgEl.src = currentImg.src;
+    activeImgEl.alt = currentImg.alt;
+  }
+
+  if (thumbStrip) {
+    let thumbsHtml = '';
+    for (let i = 0; i < p.images.length; i++) {
+      const img = p.images[i];
+      const isSelected = (i === modalActiveImageIndex);
+      const borderCls = isSelected 
+        ? 'border-cold-pure ring-1 ring-cold-pure scale-105' 
+        : 'border-cold-border opacity-50 hover:opacity-100';
+      
+      thumbsHtml += '<button onclick="window.navigateModalImageTo(' + i + ')" class="w-16 h-12 border shrink-0 overflow-hidden bg-black transition-all ' + borderCls + '">' +
+        '<img src="' + img.src + '" alt="' + (img.alt || 'Thumbnail') + '" class="w-full h-full object-contain" onerror="window.handleImgError(this)">' +
+        '</button>';
+    }
+    thumbStrip.innerHTML = thumbsHtml;
+  }
+}
+
+window.navigateModalImage = function(direction) {
+  const source = window.projectsData;
+  if (!Array.isArray(source)) return;
+  const p = source[modalActiveProjectIndex];
+  if (!p || !p.images || !p.images.length) return;
+  const len = p.images.length;
+  modalActiveImageIndex = (modalActiveImageIndex + direction + len) % len;
+  updateModalView();
+};
+
+window.navigateModalImageTo = function(idx) {
+  modalActiveImageIndex = idx;
+  updateModalView();
+};
+
+function setupKeyboardShortcuts() {
+  window.addEventListener('keydown', function(e) {
+    const modal = document.getElementById('inspector-modal');
+    if (!modal || !modal.classList.contains('active')) return;
+    if (e.key === 'Escape') window.closeInspectorModal();
+    if (e.key === 'ArrowLeft') window.navigateModalImage(-1);
+    if (e.key === 'ArrowRight') window.navigateModalImage(1);
+  });
+}
+
+// 9. CLIPBOARD DISPATCH TOOL
+window.copyEmailToClipboard = function() {
+  const email = "aibel@tamu.edu";
+  const btn = document.getElementById('copy-email-btn');
+
+  navigator.clipboard.writeText(email).then(function() {
+    if (btn) {
+      btn.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-emerald-400"></i><span>COPIED TO CLIPBOARD!</span>';
+      initLucide();
+    }
+    showHudToast('COPIED [' + email + '] TO CLIPBOARD');
+
+    setTimeout(function() {
+      if (btn) {
+        btn.innerHTML = '<i data-lucide="copy" class="w-4 h-4"></i><span>COPY: ' + email + '</span>';
+        initLucide();
+      }
+    }, 3000);
+  }).catch(() => {
+    window.location.href = 'mailto:' + email;
+  });
+};
+
+function showHudToast(msg) {
+  const toast = document.getElementById('hud-toast');
+  const msgEl = document.getElementById('hud-toast-msg');
+  if (!toast || !msgEl) return;
+
+  msgEl.textContent = msg;
+  toast.classList.remove('translate-y-24', 'opacity-0');
+  toast.classList.add('translate-y-0', 'opacity-100');
+
+  setTimeout(function() {
+    toast.classList.remove('translate-y-0', 'opacity-100');
+    toast.classList.add('translate-y-24', 'opacity-0');
+  }, 3200);
+}

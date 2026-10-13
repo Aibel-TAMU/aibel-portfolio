@@ -1,241 +1,516 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aibel Jomon — Mechanical Engineer</title>
+  <title>Aibel Jomon | Systems, Controls &amp; Test Engineering</title>
+  
   <meta name="description" content="Portfolio of Aibel Jomon. Texas A&M Mechanical Engineering, EE Minor (2029). Controls, DAQ, CAN FD Telemetry, Structural FEA. Seeking Spring/Summer 2027 Co-Op.">
   <meta name="theme-color" content="#000000">
 
-  <!-- Technical Display & Monospace Typography -->
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Technical & Display Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- Pitch-Black Avionics Theme -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cold: {
+              void: '#000000',
+              gunmetal: '#05070a',
+              titanium: '#0b0f17',
+              panel: '#101622',
+              border: '#161f30',
+              borderLight: '#24324a',
+              subtle: '#475569',
+              slate: '#8b9bb4',
+              silver: '#cbd5e1',
+              pure: '#ffffff',
+              safety: '#ff4d00', /* International flight-test orange */
+              ice: '#38bdf8'
+            }
+          },
+          fontFamily: {
+            display: ['Cabinet Grotesk', 'Space Grotesk', 'sans-serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-black text-text selection:bg-accent selection:text-black">
+<body class="bg-black text-cold-slate font-sans antialiased selection:bg-cold-safety selection:text-white relative min-h-screen overflow-x-hidden">
 
-  <!-- Reticle Cursor (Disabled on touch devices) -->
-  <div id="cursor-dot" class="cursor-element" aria-hidden="true"></div>
-  <div id="cursor-reticle" class="cursor-element" aria-hidden="true"></div>
+  <!-- 60FPS PITCH-BLACK STARFIELD & SPARK CANVAS -->
+  <canvas id="starfield-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
 
-  <!-- 60FPS Altitude Starfield Canvas -->
-  <canvas id="starfield" aria-hidden="true"></canvas>
+  <!-- Hairline Coordinate Grid & Vignette Overlay -->
+  <div class="fixed inset-0 pointer-events-none z-0 engineering-grid"></div>
+  <div class="fixed inset-0 pointer-events-none z-0 bg-radial-vignette"></div>
 
-  <!-- Ambient Top Edge Gradient -->
-  <div class="hud-scanline" aria-hidden="true"></div>
+  <!-- Realtime Scroll Progress Strip -->
+  <div id="scroll-progress-bar" class="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-cold-ice via-cold-safety to-cold-pure z-50 transition-all duration-75 w-0"></div>
 
-  <!-- HUD STATUS STRIP -->
-  <header class="hud-header">
-    <div class="hud-container">
-      <a href="#hero" class="hud-brand" data-magnetic>
-        <span class="hud-monogram">AJ</span>
-        <span class="hud-callsign">TAMU // MEEN · EE MINOR</span>
+  <!-- HUD STATUS HEADER -->
+  <header class="sticky top-0 z-40 backdrop-blur-xl bg-black/85 border-b border-cold-border/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Identifier -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-8 h-8 bg-black border border-cold-borderLight flex items-center justify-center font-mono font-bold text-cold-pure text-xs group-hover:border-cold-safety transition-colors shadow-[0_0_12px_rgba(255,77,0,0.15)]">
+          AJ
+        </div>
+        <div class="flex flex-col">
+          <span class="font-mono text-xs font-bold text-cold-pure tracking-wider group-hover:text-cold-safety transition-colors flex items-center gap-2">
+            AIBEL JOMON <span class="text-cold-subtle font-normal text-[10px] hidden sm:inline">// SYSTEMS &amp; TEST CONTROLS</span>
+          </span>
+          <span class="font-mono text-[10px] text-cold-subtle tracking-tight">TEXAS A&amp;M MEEN · EE MINOR</span>
+        </div>
       </a>
 
-      <div class="hud-telemetry" aria-label="System status">
-        <span class="status-indicator" aria-hidden="true"></span>
-        <span class="status-text">AVAILABLE // SPRING·SUMMER 2027 CO-OP</span>
+      <!-- Realtime Telemetry Status -->
+      <div class="hidden lg:flex items-center gap-5 font-mono text-[11px] text-cold-subtle">
+        <div class="flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-cold-slate">COLLEGE STATION, TX</span>
+        </div>
+        <span class="text-cold-border">/</span>
+        <div>
+          <span>CAN FD:</span> <strong class="text-cold-pure">2.0 Mbps @ 18% LOAD</strong>
+        </div>
+        <span class="text-cold-border">/</span>
+        <div>
+          <span>SYS CLOCK:</span> <strong id="mission-clock" class="text-cold-ice">00:00:00 UTC</strong>
+        </div>
+        <span class="text-cold-border">/</span>
+        <div>
+          <span>GPA:</span> <strong class="text-cold-pure">4.00</strong>
+        </div>
       </div>
 
-      <nav class="hud-nav" aria-label="Primary navigation">
-        <a href="#about" class="hud-link" data-magnetic>01·FOCUS</a>
-        <a href="#experience" class="hud-link" data-magnetic>02·SPECS</a>
-        <a href="#projects" class="hud-link" data-magnetic>03·BUILDS</a>
-        <a href="#contact" class="hud-link hud-link-accent" data-magnetic>04·DISPATCH</a>
+      <!-- Navigation Links -->
+      <nav class="flex items-center gap-6 font-mono text-xs">
+        <a href="#hero-telemetry" class="text-cold-slate hover:text-cold-pure transition-colors">
+          <span class="text-cold-subtle">01.</span> G-G DYNAMICS
+        </a>
+        <a href="#projects-feed" class="text-cold-slate hover:text-cold-pure transition-colors">
+          <span class="text-cold-subtle">02.</span> BUILDS
+        </a>
+        <a href="#dossier" class="text-cold-slate hover:text-cold-pure transition-colors">
+          <span class="text-cold-subtle">03.</span> DOSSIER
+        </a>
+        <a href="#contact" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-cold-pure hover:bg-cold-silver text-black font-bold transition-all shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+          <span>CONTACT</span>
+          <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+        </a>
       </nav>
+
     </div>
   </header>
 
-  <main>
-    <!-- HERO: MONOLITHIC BOOT RESOLVER -->
-    <section id="hero" class="hero-section">
-      <div class="section-container hero-layout">
+  <!-- HERO SECTION WITH IMMEDIATE G-G FRICTION CIRCLE CONSOLE -->
+  <section class="relative z-10 pt-10 pb-16 md:pt-16 md:pb-24 border-b border-cold-border overflow-hidden">
+    <div class="watermark-text select-none">TAMU//29</div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      
+      <!-- Status Badge -->
+      <div class="pop-in inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-black border border-cold-border font-mono text-xs mb-8 backdrop-blur-md">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cold-safety opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-cold-safety"></span>
+        </span>
+        <span class="text-cold-pure font-bold">SYSTEMS INTEGRATION &amp; TEST ENGINEERING</span>
+        <span class="text-cold-subtle">|</span>
+        <span class="text-cold-slate">AVAILABLE SPRING / SUMMER 2027 CO-OP</span>
+      </div>
+
+      <!-- Hero Grid: Left = Headline & Stats, Right = Live G-G Telemetry Terminal -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
         
-        <div class="hero-meta font-mono">
-          <span class="hero-tag">[ SYS_ID: 2029_TAMU_MEEN ]</span>
-          <span class="hero-status">TEXAS A&amp;M UNIVERSITY</span>
-        </div>
+        <!-- Left: Statement & Metrics (7 Cols) -->
+        <div class="lg:col-span-7">
+          <h1 class="pop-in text-5xl sm:text-7xl lg:text-8xl font-display font-extrabold text-cold-pure uppercase tracking-tight leading-[0.88] mb-6">
+            Mechanical. <br>
+            <span class="text-cold-subtle">Embedded.</span> <br>
+            <span class="text-cold-pure underline decoration-cold-safety decoration-4 underline-offset-[12px]">Validated.</span>
+          </h1>
 
-        <h1 class="hero-title" aria-label="Aibel Jomon">
-          <span id="scramble-name" data-value="AIBEL JOMON">AIBEL JOMON</span>
-        </h1>
-
-        <div class="hero-subline-block">
-          <p class="hero-subline font-mono">
-            Mechanical Engineer — Controls, DAQ, Telemetry
+          <p class="pop-in text-base sm:text-lg text-cold-slate leading-relaxed font-normal max-w-2xl mb-8">
+            Sophomore Mechanical Engineering major &amp; Electrical Engineering minor at <strong class="text-cold-pure font-medium">Texas A&amp;M University</strong>. Test Engineer for TAMU's <strong class="text-cold-pure font-medium">SAE Baja</strong> and <strong class="text-cold-pure font-medium">Naval Design</strong> teams. Focused on structural FEA, deterministically clocked CAN FD telemetry architectures, and closed-loop embedded controls under dynamic track loading.
           </p>
-          <div class="hero-prompt font-mono" aria-hidden="true">
-            <span class="prompt-pulse"></span>
-            <span class="prompt-text">SCROLL TO INSPECT SUBSYSTEMS</span>
+
+          <!-- Metrics Strip -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 font-mono">
+            <div class="pop-in p-4 bg-black border border-cold-border">
+              <span class="text-[9px] text-cold-subtle block uppercase tracking-wider">GPA</span>
+              <span class="text-2xl sm:text-3xl font-extrabold text-cold-pure block mt-1">
+                <span class="counter" data-target="4.00" data-decimals="2">0.00</span>
+              </span>
+              <span class="text-[10px] text-cold-slate mt-0.5 block">Texas A&amp;M Honors</span>
+            </div>
+
+            <div class="pop-in p-4 bg-black border border-cold-border">
+              <span class="text-[9px] text-cold-subtle block uppercase tracking-wider">Subteam</span>
+              <span class="text-xl sm:text-2xl font-bold text-cold-pure block mt-1 truncate">SAE Baja</span>
+              <span class="text-[10px] text-cold-slate mt-0.5 block">Controls &amp; DAQ</span>
+            </div>
+
+            <div class="pop-in p-4 bg-black border border-cold-border">
+              <span class="text-[9px] text-cold-subtle block uppercase tracking-wider">Protocol</span>
+              <span class="text-xl sm:text-2xl font-bold text-cold-pure block mt-1">CAN FD</span>
+              <span class="text-[10px] text-cold-slate mt-0.5 block">2 Mbps Data Rate</span>
+            </div>
+
+            <div class="pop-in p-4 bg-black border border-cold-border">
+              <span class="text-[9px] text-cold-subtle block uppercase tracking-wider">Analysis</span>
+              <span class="text-xl sm:text-2xl font-bold text-cold-pure block mt-1">ANSYS</span>
+              <span class="text-[10px] text-cold-slate mt-0.5 block">Mechanical FEA</span>
+            </div>
+          </div>
+
+          <!-- Direct Actions -->
+          <div class="pop-in flex flex-wrap items-center gap-3 font-mono text-xs">
+            <a href="#projects-feed" class="px-6 py-3.5 bg-cold-pure hover:bg-cold-silver text-black font-bold transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95">
+              <span>EXPLORE HARDWARE BUILDS</span>
+              <i data-lucide="arrow-down" class="w-4 h-4"></i>
+            </a>
+
+            <a href="assets/resume.pdf" download class="px-6 py-3.5 bg-black hover:bg-cold-titanium text-cold-pure border border-cold-border transition-all flex items-center gap-2 active:scale-95"[cite: 1]>
+              <i data-lucide="file-text" class="w-4 h-4 text-cold-subtle"></i>
+              <span>RESUME (PDF)</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: MoTeC-Style G-G Friction Circle Console (5 Cols) -->
+        <div id="hero-telemetry" class="lg:col-span-5 pop-in">
+          <div class="bg-black border border-cold-border p-5 shadow-[0_0_35px_rgba(0,0,0,0.95)] backdrop-blur-md relative">
+            
+            <!-- Terminal Header -->
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-cold-border font-mono text-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-cold-safety animate-pulse"></span>
+                <span class="text-cold-pure font-bold tracking-wider">G-G FRICTION CIRCLE // RUN LOG</span>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 bg-cold-titanium border border-cold-border text-cold-ice font-bold">100 Hz DETERMINISTIC</span>
+            </div>
+
+            <!-- G-G Friction Circle Canvas Container -->
+            <div class="relative w-full aspect-square bg-black border border-cold-border p-2 flex items-center justify-center overflow-hidden mb-4">
+              <canvas id="friction-circle-canvas" width="360" height="360" class="w-full h-full"></canvas>
+              
+              <!-- Crosshair Directional Badges -->
+              <span class="absolute top-2 left-1/2 -translate-x-1/2 font-mono text-[9px] text-cold-subtle tracking-widest">+BRAKE (LONG G)</span>
+              <span class="absolute bottom-2 left-1/2 -translate-x-1/2 font-mono text-[9px] text-cold-subtle tracking-widest">+ACCEL (LONG G)</span>
+              <span class="absolute left-2 top-1/2 -translate-y-1/2 font-mono text-[9px] text-cold-subtle -rotate-90 origin-center tracking-widest">+LEFT LAT G</span>
+              <span class="absolute right-2 top-1/2 -translate-y-1/2 font-mono text-[9px] text-cold-subtle rotate-90 origin-center tracking-widest">+RIGHT LAT G</span>
+            </div>
+
+            <!-- Timeline Scrubber -->
+            <div class="space-y-1 mb-4 font-mono text-xs">
+              <div class="flex justify-between items-center text-[10px] text-cold-subtle">
+                <span>0.0s (Launch)</span>
+                <span>6.8s (Slalom Entry)</span>
+                <span>9.5s (Peak Grip)</span>
+                <span>12.0s (Braking)</span>
+              </div>
+              <input type="range" id="telemetry-scrubber" min="0" max="12" step="0.05" value="0" class="w-full h-1.5 bg-cold-border appearance-none cursor-pointer accent-cold-safety">
+            </div>
+
+            <!-- Live G Vector Quantitatives -->
+            <div class="grid grid-cols-3 gap-2 p-3 bg-black border border-cold-border font-mono text-xs mb-4">
+              <div>
+                <span class="text-cold-subtle block text-[9px]">LATERAL G</span>
+                <strong id="friction-lat-g" class="text-cold-pure text-sm">0.00 G</strong>
+              </div>
+              <div>
+                <span class="text-cold-subtle block text-[9px]">LONG G</span>
+                <strong id="friction-long-g" class="text-cold-pure text-sm">0.00 G</strong>
+              </div>
+              <div>
+                <span class="text-cold-subtle block text-[9px]">TOTAL VECTOR</span>
+                <strong id="friction-g-total" class="text-cold-safety text-sm">0.00 G</strong>
+              </div>
+            </div>
+
+            <!-- Telemetry Replay Controls -->
+            <div class="flex items-center justify-between font-mono text-xs pt-1">
+              <div class="flex items-center gap-2">
+                <button id="telemetry-play-btn" onclick="window.toggleTelemetryPlayback()" class="px-3.5 py-1.5 bg-cold-pure hover:bg-cold-silver text-black font-bold flex items-center gap-1.5 transition-all active:scale-95">
+                  <i data-lucide="pause" class="w-3.5 h-3.5"></i>
+                  <span>PAUSE</span>
+                </button>
+                <button onclick="window.setTelemetrySpeed(1)" class="telemetry-speed-btn px-2 py-1.5 border border-cold-border bg-cold-titanium text-cold-pure font-bold" data-speed="1">1X</button>
+                <button onclick="window.setTelemetrySpeed(2)" class="telemetry-speed-btn px-2 py-1.5 border border-cold-border text-cold-slate hover:text-cold-pure" data-speed="2">2X</button>
+              </div>
+
+              <div class="text-right">
+                <span class="text-cold-subtle text-[10px]">TIME: </span>
+                <strong id="telemetry-time-readout" class="text-cold-ice text-xs">0.00s</strong>
+                <span class="text-cold-subtle text-[10px]"> / 12.00s</span>
+              </div>
+            </div>
+
           </div>
         </div>
 
       </div>
-    </section>
 
-    <!-- FOCUS: SURGICAL RESTRAINT -->
-    <section id="about" class="section-boundary">
-      <div class="section-container">
-        <header class="section-header">
-          <span class="section-index font-mono">01 // CORE COMPETENCY</span>
-          <h2 class="sr-only">Focus Areas</h2>
-        </header>
+    </div>
+  </section>
 
-        <div class="focus-grid">
-          <article class="focus-cell" data-tilt>
-            <div class="focus-cell-inner">
-              <span class="cell-num font-mono">01</span>
-              <h3 class="focus-headline">FEA</h3>
-              <p class="focus-desc font-mono">Static &amp; dynamic structural solvers. Non-linear deflection profiling. Mass optimization.</p>
-            </div>
-          </article>
+  <!-- CONTINUOUS VERTICAL PROJECT FEED: RE-ENGINEERED BLUEPRINT DOSSIER -->
+  <section id="projects-feed" class="relative z-10 py-20 md:py-32 border-b border-cold-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Intro & Filter Switcher -->
+      <div class="pop-in flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+        <div class="max-w-2xl">
+          <div class="font-mono text-xs text-cold-safety font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+            <i data-lucide="layers" class="w-4 h-4"></i>
+            <span>ENGINEERING UNITS // HARDWARE &amp; TELEMETRY DOSSIER</span>
+          </div>
+          <h2 class="text-4xl sm:text-6xl font-display font-extrabold text-cold-pure uppercase tracking-tight">
+            Verified Subsystems
+          </h2>
+          <p class="text-cold-slate text-base mt-3 font-sans">
+            Full-scale CAD assemblies, finite element stress models, PCB layouts, and physical test validation runs. Switch slides directly on any card or expand into full-screen blueprint inspection.
+          </p>
+        </div>
 
-          <article class="focus-cell" data-tilt>
-            <div class="focus-cell-inner">
-              <span class="cell-num font-mono">02</span>
-              <h3 class="focus-headline">CAN FD Telemetry</h3>
-              <p class="focus-desc font-mono">2.0 Mbps differential bus architecture. Deterministic edge packet logging. Noise rejection.</p>
-            </div>
-          </article>
-
-          <article class="focus-cell" data-tilt>
-            <div class="focus-cell-inner">
-              <span class="cell-num font-mono">03</span>
-              <h3 class="focus-headline">Embedded Validation</h3>
-              <p class="focus-desc font-mono">Bare-metal FreeRTOS firmware. High-load test stands. Sub-6ms physical verification.</p>
-            </div>
-          </article>
+        <!-- Filter Controls -->
+        <div class="flex flex-wrap items-center gap-2 font-mono text-xs bg-black p-1.5 border border-cold-border">
+          <button onclick="window.setProjectFilter('all')" class="project-filter-btn px-3 py-1.5 bg-cold-pure text-black font-bold transition-all" data-filter="all">ALL UNITS</button>
+          <button onclick="window.setProjectFilter('structural')" class="project-filter-btn px-3 py-1.5 text-cold-slate hover:text-cold-pure transition-all" data-filter="structural">FEA &amp; STRUCTURAL</button>
+          <button onclick="window.setProjectFilter('daq')" class="project-filter-btn px-3 py-1.5 text-cold-slate hover:text-cold-pure transition-all" data-filter="daq">TELEMETRY &amp; DAQ</button>
+          <button onclick="window.setProjectFilter('embedded')" class="project-filter-btn px-3 py-1.5 text-cold-slate hover:text-cold-pure transition-all" data-filter="embedded">EMBEDDED SYSTEMS</button>
         </div>
       </div>
-    </section>
 
-    <!-- EXPERIENCE: SPEC SHEET -->
-    <section id="experience" class="section-boundary">
-      <div class="section-container">
-        <header class="section-header">
-          <span class="section-index font-mono">02 // FIELD OPERATIONS</span>
-          <h2 class="section-title">Technical Experience</h2>
-        </header>
+      <!-- Vertical Project Stream Container (Dynamically rendered via script.js) -->
+      <div id="projects-feed-container" class="space-y-36"></div>
 
-        <div class="spec-table" role="table" aria-label="Engineering Experience">
-          
-          <div class="spec-row" role="row">
-            <div class="spec-col-date font-mono" role="cell">2026 — PRES.</div>
-            <div class="spec-col-entity" role="cell">
-              <h3 class="spec-role">Test Engineer — Controls &amp; DAQ</h3>
-              <span class="spec-org font-mono">Texas A&amp;M SAE Baja</span>
+    </div>
+  </section>
+
+  <!-- RECRUITER DOSSIER & VERIFIED CREDENTIALS -->
+  <section id="dossier" class="relative z-10 py-20 md:py-32 border-b border-cold-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left: Verified Summary Checklist -->
+        <div class="pop-in lg:col-span-4 space-y-4">
+          <div class="font-mono text-xs text-cold-safety font-bold uppercase tracking-widest mb-1 flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
+            VERIFIED CREDENTIALS // TALENT HUB
+          </div>
+          <h2 class="text-4xl font-display font-extrabold text-cold-pure uppercase">
+            Recruiter Dossier
+          </h2>
+          <p class="text-cold-slate text-sm font-sans leading-relaxed">
+            Official academic records, validated design logs, and authenticated resume files for aerospace, defense, and automotive engineering teams.
+          </p>
+
+          <div class="space-y-2 font-mono text-xs pt-4">
+            <div class="p-3 bg-black border border-cold-border flex justify-between items-center">
+              <div>
+                <span class="text-cold-subtle block text-[9px]">ENGINEER:</span>
+                <span class="text-cold-pure font-bold">Aibel Jomon</span>
+              </div>
+              <span class="px-2 py-0.5 bg-cold-titanium text-cold-pure border border-cold-border">TAMU '29</span>
             </div>
-            <div class="spec-col-details font-mono" role="cell">
-              Distributed CAN FD nodes · Custom conditioning PCBs · High-frequency chassis telemetry · Strain &amp; displacement data
+
+            <div class="p-3 bg-black border border-cold-border flex justify-between items-center">
+              <div>
+                <span class="text-cold-subtle block text-[9px]">CUMULATIVE GPA:</span>
+                <span class="text-cold-pure font-bold">4.00 Cumulative</span>
+              </div>
+              <span class="text-emerald-400 font-bold">HONORS</span>
+            </div>
+
+            <div class="p-3 bg-black border border-cold-border flex justify-between items-center">
+              <div>
+                <span class="text-cold-subtle block text-[9px]">CO-OP TIMELINE:</span>
+                <span class="text-cold-pure font-bold">Spring &amp; Summer 2027</span>
+              </div>
+              <span class="px-2 py-0.5 bg-emerald-950/80 text-emerald-400 border border-emerald-800 font-bold">READY</span>
             </div>
           </div>
 
-          <div class="spec-row" role="row">
-            <div class="spec-col-date font-mono" role="cell">2025 — 2026</div>
-            <div class="spec-col-entity" role="cell">
-              <h3 class="spec-role">Controls &amp; Hydrodynamics Lead</h3>
-              <span class="spec-org font-mono">Texas A&amp;M Naval Design Team</span>
-            </div>
-            <div class="spec-col-details font-mono" role="cell">
-              Differential thrust control logic · OpenProp foil hydrodynamics · CFD vortex suppression · PA-CF additive manufacturing
-            </div>
-          </div>
+          <!-- Document Download Actions -->
+          <div class="space-y-2 font-mono text-xs pt-4">
+            <a href="assets/resume.pdf" download class="w-full flex items-center justify-between p-3.5 bg-cold-pure hover:bg-cold-silver text-black font-bold transition-all shadow-[0_0_15px_rgba(255,255,255,0.15)] active:scale-95"[cite: 1]>
+              <span class="flex items-center gap-2">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                <span>DOWNLOAD RESUME (PDF)</span>
+              </span>
+              <span>LATEST</span>
+            </a>
 
-          <div class="spec-row" role="row">
-            <div class="spec-col-date font-mono" role="cell">2025 — PRES.</div>
-            <div class="spec-col-entity" role="cell">
-              <h3 class="spec-role">Undergraduate Researcher</h3>
-              <span class="spec-org font-mono">Texas A&amp;M Engineering Honors</span>
-            </div>
-            <div class="spec-col-details font-mono" role="cell">
-              4.00 Cumulative GPA · SolidWorks FEA · ANSYS Mechanical · Transient multi-domain physics simulations
-            </div>
-          </div>
+            <a href="assets/design-portfolio.pdf" download class="w-full flex items-center justify-between p-3.5 bg-black hover:bg-cold-titanium text-cold-pure border border-cold-border transition-colors active:scale-95"[cite: 1]>
+              <span class="flex items-center gap-2">
+                <i data-lucide="file-text" class="w-4 h-4 text-cold-subtle"></i>
+                <span>Design Portfolio &amp; CAD Logs</span>
+              </span>
+              <span class="text-cold-subtle">PDF</span>
+            </a>
 
+            <a href="assets/transcript-summary.pdf" download class="w-full flex items-center justify-between p-3.5 bg-black hover:bg-cold-titanium text-cold-pure border border-cold-border transition-colors active:scale-95"[cite: 1]>
+              <span class="flex items-center gap-2">
+                <i data-lucide="award" class="w-4 h-4 text-cold-subtle"></i>
+                <span>Academic Record &amp; Transcripts</span>
+              </span>
+              <span class="text-cold-subtle">PDF</span>
+            </a>
+          </div>
         </div>
-      </div>
-    </section>
 
-    <!-- PROJECTS: INTERACTIVE DATA MATRIX -->
-    <section id="projects" class="section-boundary">
-      <div class="section-container">
-        <header class="section-header section-header-split">
+        <!-- Right: Embedded Resume Preview -->
+        <div class="pop-in lg:col-span-8 bg-black border border-cold-border p-4 flex flex-col h-[650px] shadow-2xl backdrop-blur-md">
+          <div class="flex items-center justify-between pb-3 mb-3 border-b border-cold-border font-mono text-xs">
+            <div class="flex items-center gap-2 text-cold-pure">
+              <span class="w-2 h-2 rounded-full bg-cold-safety"></span>
+              <span class="font-bold">RESUME_VIEWPORT // AIBEL_JOMON.PDF</span>
+            </div>
+            <a href="assets/resume.pdf" target="_blank" class="hover:text-cold-pure transition-colors flex items-center gap-1 text-[11px] text-cold-subtle"[cite: 1]>
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              <span>FULLSCREEN</span>
+            </a>
+          </div>
+
+          <div class="w-full flex-grow bg-black border border-cold-border overflow-hidden">
+            <iframe 
+              src="assets/resume.pdf" 
+              class="w-full h-full" 
+              title="Aibel Jomon Engineering Resume"
+              loading="lazy"
+            ></iframe>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACT & FOOTER TERMINAL -->
+  <footer id="contact" class="relative z-10 py-16 bg-black border-t border-cold-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="pop-in p-8 sm:p-14 bg-black border border-cold-border relative overflow-hidden backdrop-blur-md">
+        
+        <div class="max-w-3xl relative z-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1 bg-cold-titanium border border-cold-border text-cold-pure text-xs font-mono mb-4">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>TRANSMISSION TERMINAL // DIRECT DISPATCH</span>
+          </div>
+
+          <h2 class="text-4xl sm:text-6xl font-display font-extrabold text-cold-pure uppercase leading-[0.95] tracking-tight">
+            Let's build systems that dominate track &amp; air.
+          </h2>
+
+          <p class="text-cold-slate text-base mt-4 font-sans leading-relaxed">
+            Actively seeking specialized vehicle dynamics, telemetry networks, test fixtures, and control system engineering roles for Spring/Summer 2027.
+          </p>
+
+          <div class="mt-8 flex flex-wrap items-center gap-3 font-mono text-xs">
+            <button onclick="window.copyEmailToClipboard()" id="copy-email-btn" class="px-6 py-4 bg-cold-pure hover:bg-cold-silver text-black font-bold transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(255,255,255,0.2)] active:scale-95">
+              <i data-lucide="copy" class="w-4 h-4"></i>
+              <span>COPY: aibel@tamu.edu</span>
+            </button>
+
+            <a href="mailto:aibel@tamu.edu" class="px-6 py-4 bg-black hover:bg-cold-panel text-cold-pure border border-cold-border flex items-center gap-2 transition-all active:scale-95">
+              <i data-lucide="send" class="w-4 h-4 text-cold-subtle"></i>
+              <span>LAUNCH CLIENT</span>
+            </a>
+
+            <a href="https://linkedin.com/in/aibel-jomon" target="_blank" rel="noopener noreferrer" class="px-6 py-4 bg-black hover:bg-cold-panel text-cold-pure border border-cold-border flex items-center gap-2 transition-all active:scale-95">
+              <i data-lucide="linkedin" class="w-4 h-4 text-sky-400"></i>
+              <span>LINKEDIN</span>
+            </a>
+
+            <a href="https://github.com/aibeljomon" target="_blank" rel="noopener noreferrer" class="px-6 py-4 bg-black hover:bg-cold-panel text-cold-pure border border-cold-border flex items-center gap-2 transition-all active:scale-95">
+              <i data-lucide="github" class="w-4 h-4 text-cold-pure"></i>
+              <span>GITHUB</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-14 pt-6 border-t border-cold-border flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[10px] text-cold-subtle">
           <div>
-            <span class="section-index font-mono">03 // HARDWARE UNITS</span>
-            <h2 class="section-title">Engineered Builds</h2>
+            AIBEL JOMON // TEXAS A&amp;M UNIVERSITY · MECHANICAL ENGINEERING
           </div>
-
-          <!-- Filter Toolbar -->
-          <div class="filter-toolbar font-mono" role="tablist" aria-label="Filter projects">
-            <button class="filter-pill is-active" data-filter="all" role="tab" aria-selected="true" data-magnetic>ALL</button>
-            <button class="filter-pill" data-filter="fea" role="tab" aria-selected="false" data-magnetic>FEA</button>
-            <button class="filter-pill" data-filter="telemetry" role="tab" aria-selected="false" data-magnetic>TELEMETRY</button>
-            <button class="filter-pill" data-filter="embedded" role="tab" aria-selected="false" data-magnetic>EMBEDDED</button>
-          </div>
-        </header>
-
-        <!-- Dynamic Grid Injected from projects.js -->
-        <div id="projects-grid" class="projects-grid" aria-live="polite"></div>
-      </div>
-    </section>
-
-    <!-- CONTACT: DISPATCH TERMINAL -->
-    <section id="contact" class="section-boundary contact-section">
-      <div class="section-container">
-        <div class="contact-card" data-tilt>
-          <div class="contact-card-inner">
-            <div class="contact-indicator font-mono">
-              <span class="status-indicator"></span>
-              <span>COMMUNICATION CHANNELS OPEN</span>
-            </div>
-
-            <h2 class="contact-heading">
-              Available Spring &amp; Summer 2027.
-            </h2>
-            <p class="contact-subline font-mono">
-              Seeking extreme-ownership engineering roles in vehicle dynamics, flight hardware, DAQ, and real-time controls.
-            </p>
-
-            <div class="contact-actions font-mono">
-              <button id="copy-email-btn" class="dispatch-btn dispatch-btn-primary" data-email="aibel@tamu.edu" data-magnetic>
-                <span class="btn-label">aibel@tamu.edu</span>
-                <span class="btn-action">[ COPY EMAIL ]</span>
-              </button>
-
-              <a href="https://linkedin.com/in/aibel-jomon" target="_blank" rel="noopener noreferrer" class="dispatch-btn" data-magnetic>
-                <span>LINKEDIN</span>
-                <span class="arrow-glyph">↗</span>
-              </a>
-
-              <a href="https://github.com/aibeljomon" target="_blank" rel="noopener noreferrer" class="dispatch-btn" data-magnetic>
-                <span>GITHUB</span>
-                <span class="arrow-glyph">↗</span>
-              </a>
-
-              <a href="assets/resume.pdf" download class="dispatch-btn" data-magnetic>
-                <span>RESUME (PDF)</span>
-                <span class="arrow-glyph">↓</span>
-              </a>
-            </div>
+          <div>
+            DEPLOYED VIA CLOUDFLARE PAGES // AIBEL.ENGINEER
           </div>
         </div>
-      </div>
-    </section>
-  </main>
 
-  <!-- MINIMAL FOOTER -->
-  <footer class="hud-footer font-mono">
-    <div class="section-container footer-layout">
-      <span>AIBEL JOMON // COLLEGE STATION, TX</span>
-      <span class="footer-dim">LAT 30.6280° N, LON 96.3344° W</span>
-      <span>BUILT WITH ZERO DEPENDENCIES</span>
+      </div>
+
     </div>
   </footer>
 
-  <!-- Notification Toast -->
-  <aside id="toast" class="hud-toast font-mono" role="status" aria-hidden="true"></aside>
+  <!-- FULLSCREEN BLUEPRINT LIGHTBOX MODAL -->
+  <div id="inspector-modal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl hidden flex-col items-center justify-center p-2 sm:p-6 opacity-0 transition-opacity duration-300">
+    <div class="bg-black border border-cold-border w-full max-w-6xl max-h-[96vh] flex flex-col overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.95)] relative">
+      
+      <!-- Modal Top Bar -->
+      <div class="h-14 px-6 border-b border-cold-border flex items-center justify-between font-mono text-xs bg-black">
+        <div class="flex items-center gap-3">
+          <span class="w-2.5 h-2.5 rounded-full bg-cold-safety"></span>
+          <span id="modal-project-title" class="text-cold-pure font-bold tracking-wider uppercase font-display">SUBSYSTEM BLUEPRINT</span>
+          <span class="text-cold-border">/</span>
+          <span id="modal-image-counter" class="text-cold-subtle">SLIDE 1 OF 8</span>
+        </div>
+
+        <button onclick="window.closeInspectorModal()" class="p-2 bg-black hover:bg-cold-pure hover:text-black text-cold-slate transition-colors border border-cold-border" title="Close [Esc]">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Main Stage -->
+      <div class="relative flex-grow flex items-center justify-center p-4 bg-black overflow-hidden min-h-[380px]">
+        <img id="modal-active-img" src="" alt="Hardware Blueprint Slide" class="max-h-[64vh] max-w-full object-contain select-none transition-all duration-300">
+
+        <button onclick="window.navigateModalImage(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/90 hover:bg-cold-pure hover:text-black border border-cold-border text-cold-pure transition-all" aria-label="Previous">
+          <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </button>
+
+        <button onclick="window.navigateModalImage(1)" class="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black/90 hover:bg-cold-pure hover:text-black border border-cold-border text-cold-pure transition-all" aria-label="Next">
+          <i data-lucide="chevron-right" class="w-5 h-5"></i>
+        </button>
+
+        <div id="modal-caption" class="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-black/90 border border-cold-border text-cold-pure text-xs font-mono text-center max-w-[85%]">
+          Caption
+        </div>
+      </div>
+
+      <!-- Thumbnail Strip -->
+      <div id="modal-thumb-strip" class="p-3 bg-black border-t border-cold-border flex items-center gap-2 overflow-x-auto"></div>
+
+    </div>
+  </div>
+
+  <!-- HUD TOAST NOTIFICATION -->
+  <div id="hud-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-black border-l-4 border-cold-pure text-cold-pure px-5 py-3 shadow-[0_0_20px_rgba(0,0,0,0.8)] font-mono text-xs flex items-center gap-3">
+    <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+    <span id="hud-toast-msg">COMMS COPIED TO CLIPBOARD</span>
+  </div>
 
   <!-- SCRIPTS -->
   <script src="projects.js"></script>
