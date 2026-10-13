@@ -6,12 +6,15 @@ let modalActiveImageIndex = 0;
 
 // Telemetry Replay Engine State
 let telemetryTime = 0.0;
-let isTelemetryPlaying = false;
+let isTelemetryPlaying = true; // Auto-plays on load so page feels immediately alive
 let telemetryAnimFrame = null;
-const TELEMETRY_DURATION = 12.0; // 12 seconds sector replay
+const TELEMETRY_DURATION = 12.0;
 
 document.addEventListener('DOMContentLoaded', () => {
   initLucide();
+  initAmbientCanvas();
+  initScrollAnimations();
+  init3DTilt();
   initTelemetryEngine();
   renderCanNodeSelector();
   renderBuildsConsole();
@@ -22,10 +25,141 @@ function initLucide() {
   if (window.lucide) window.lucide.createIcons();
 }
 
-// 1. MOTEC CHASSIS TELEMETRY ENGINE
+// 1. SCROLL REVEALS & NUMERICAL COUNTER ANIMATIONS
+function initScrollAnimations() {
+  const elements = document.querySelectorAll('.reveal-up, .reveal-card');
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        
+        // Check for counter numbers to animate
+        const counters = entry.target.querySelectorAll('.counter');
+        counters.forEach(counter => animateCounter(counter));
+
+        obs.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.12,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  elements.forEach(el => observer.observe(el));
+}
+
+function animateCounter(el) {
+  const target = parseFloat(el.getAttribute('data-target'));
+  const decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+  const duration = 1400; // ms
+  const start = 0;
+  const startTime = performance.now();
+
+  function update(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    
+    // Smooth easeOutExpo curve
+    const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+    const current = start + (target - start) * ease;
+
+    el.textContent = current.toFixed(decimals);
+
+    if (progress < 1) {
+      requestAnimationFrame(update);
+    } else {
+      el.textContent = target.toFixed(decimals);
+    }
+  }
+
+  requestAnimationFrame(update);
+}
+
+// 2. 3D CARD CURSOR-TILT PHYSICS
+function init3DTilt() {
+  const cards = document.querySelectorAll('[data-tilt]');
+
+  cards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+
+      const rotX = ((y - cy) / cy) * -6; // +/- 6 deg
+      const rotY = ((x - cx) / cx) * 6;  // +/- 6 deg
+
+      card.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-2px)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+    });
+  });
+}
+
+// 3. AMBIENT PARTICLES & TELEMETRY BACKGROUND CANVAS
+function initAmbientCanvas() {
+  const canvas = document.getElementById('ambient-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let w = (canvas.width = window.innerWidth);
+  let h = (canvas.height = window.innerHeight);
+
+  window.addEventListener('resize', () => {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  });
+
+  const particles = Array.from({ length: 32 }, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    vx: (Math.random() - 0.5) * 0.35,
+    vy: (Math.random() - 0.5) * 0.35,
+    size: Math.random() * 1.5 + 1
+  }));
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 130) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > w) p.vx *= -1;
+      if (p.y < 0 || p.y > h) p.vy *= -1;
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// 4. MOTEC CHASSIS TELEMETRY ENGINE
 function getTelemetrySample(t) {
-  // Realistic physical vehicle dynamics modeled over 12s acceleration + slalom test
-  // Speed curve: 0 to 38 MPH with CVT shift progression
+  // Speed curve: 0 to 38.0 MPH with CVT shift progression
   const speed = Math.min(38.0, 38.0 * (1 - Math.exp(-t / 3.4)));
 
   // Primary Engine RPM: 1800 idle, quick stall jump to ~3600-3800 RPM governor
@@ -33,29 +167,24 @@ function getTelemetrySample(t) {
 
   // Secondary CVT RPM: tracks speed linearly
   const secRpm = (speed / 38.0) * 3100 + 120;
-
-  // CVT Ratio: Secondary / Primary
   const ratio = (secRpm / priRpm).toFixed(2);
 
-  // Lateral & Longitudinal G-forces (acceleration forward, then lateral slalom oscillation)
+  // Lateral & Longitudinal G-forces
   let longG = 0;
   if (t < 2.5) {
-    longG = 0.85 * (1 - t / 3.0); // Launch longitudinal acceleration
+    longG = 0.85 * (1 - t / 3.0);
   } else if (t > 10.5) {
-    longG = -1.1; // Hard braking deceleration at the end
+    longG = -1.1; // Braking
   } else {
-    longG = -0.15 * Math.sin(t * 2.5); // Minor drag/scrub in slalom
+    longG = -0.15 * Math.sin(t * 2.5);
   }
 
   let latG = 0;
   if (t >= 3.0 && t <= 10.5) {
-    // Slalom cornering oscillating lateral G
     latG = 1.35 * Math.sin((t - 3.0) * 1.45);
   }
 
-  // Combined total G magnitude
   const totalG = Math.sqrt(latG * latG + longG * longG).toFixed(2);
-
   return { t, speed: speed.toFixed(1), priRpm: Math.round(priRpm), secRpm: Math.round(secRpm), ratio, latG, longG, totalG };
 }
 
@@ -68,7 +197,9 @@ function initTelemetryEngine() {
       updateTelemetryUI();
     });
   }
-  updateTelemetryUI();
+
+  // Auto-start run on page load
+  startTelemetry();
 }
 
 function toggleTelemetryPlayback() {
@@ -96,7 +227,7 @@ function startTelemetry() {
 
     telemetryTime += delta;
     if (telemetryTime >= TELEMETRY_DURATION) {
-      telemetryTime = 0; // Loop run
+      telemetryTime = 0;
     }
 
     const scrubber = document.getElementById('telemetry-scrubber');
@@ -122,7 +253,6 @@ function pauseTelemetry() {
 function updateTelemetryUI() {
   const sample = getTelemetrySample(telemetryTime);
 
-  // Digital Indicators
   const timeEl = document.getElementById('telemetry-time-readout');
   const speedEl = document.getElementById('readout-speed');
   const priRpmEl = document.getElementById('readout-pri-rpm');
@@ -153,11 +283,11 @@ function renderFrictionCircleCanvas(currentSample) {
   const h = canvas.height;
   const cx = w / 2;
   const cy = h / 2;
-  const radius = cx - 25; // Friction limit circle
+  const radius = cx - 25;
 
   ctx.clearRect(0, 0, w, h);
 
-  // Outer limit circle (1.6 G tire limit boundary)
+  // Outer limit circle (1.6 G)
   ctx.strokeStyle = '#1f2738';
   ctx.lineWidth = 1.5;
   [0.33, 0.66, 1.0].forEach(r => {
@@ -174,7 +304,7 @@ function renderFrictionCircleCanvas(currentSample) {
   ctx.lineTo(cx + radius, cy);
   ctx.stroke();
 
-  // Draw historic scatter trail leading up to current time
+  // Draw historic scatter trail
   const trailCount = 18;
   for (let i = trailCount; i >= 1; i--) {
     const pastT = Math.max(0, telemetryTime - (i * 0.05));
@@ -189,11 +319,10 @@ function renderFrictionCircleCanvas(currentSample) {
     ctx.fill();
   }
 
-  // Current G Position Marker
+  // Current G vector
   const curX = cx + (currentSample.latG / 1.6) * radius;
   const curY = cy - (currentSample.longG / 1.6) * radius;
 
-  // Acceleration Vector Line
   ctx.strokeStyle = 'rgba(255, 77, 0, 0.7)';
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -201,7 +330,6 @@ function renderFrictionCircleCanvas(currentSample) {
   ctx.lineTo(curX, curY);
   ctx.stroke();
 
-  // Active Spot
   ctx.fillStyle = '#ffffff';
   ctx.beginPath();
   ctx.arc(curX, curY, 5, 0, Math.PI * 2);
@@ -227,7 +355,7 @@ function renderWaveformCanvas(currentTime) {
   const plotW = w - padL - padR;
   const plotH = h - padT - padB;
 
-  // Grid lines
+  // Grid
   ctx.strokeStyle = '#121622';
   ctx.lineWidth = 1;
   for (let s = 0; s <= 12; s += 2) {
@@ -245,7 +373,7 @@ function renderWaveformCanvas(currentTime) {
     ctx.stroke();
   }
 
-  // Draw Primary RPM Trace (Safety Orange)
+  // Primary RPM Trace (Safety Orange)
   ctx.strokeStyle = '#ff4d00';
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -258,7 +386,7 @@ function renderWaveformCanvas(currentTime) {
   }
   ctx.stroke();
 
-  // Draw Secondary RPM Trace (Ice Blue)
+  // Secondary RPM Trace (Ice Blue)
   ctx.strokeStyle = '#38bdf8';
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -271,7 +399,7 @@ function renderWaveformCanvas(currentTime) {
   }
   ctx.stroke();
 
-  // Draw Speed Trace (Pure White)
+  // Speed Trace (White)
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
   ctx.lineWidth = 1.8;
   ctx.beginPath();
@@ -296,7 +424,7 @@ function renderWaveformCanvas(currentTime) {
   ctx.setLineDash([]);
 }
 
-// 2. CAN FD BUS TOPOLOGY MATRIX
+// 5. CAN FD BUS TOPOLOGY SWITCHER
 function renderCanNodeSelector() {
   const container = document.getElementById('can-node-selector');
   if (!container || typeof canNodesData === 'undefined') return;
@@ -392,13 +520,12 @@ function renderCanNodeDetail() {
   `;
 }
 
-// 3. MASTER-DETAIL ENGINEERING BUILDS CONSOLE
+// 6. MASTER-DETAIL ENGINEERING BUILDS CONSOLE
 function renderBuildsConsole() {
   const navContainer = document.getElementById('builds-nav-list');
   const stage = document.getElementById('builds-detail-stage');
   if (!navContainer || !stage || typeof projectsData === 'undefined') return;
 
-  // Render Left Subsystem Navigation List
   navContainer.innerHTML = projectsData.map((project, idx) => `
     <button 
       onclick="selectBuild(${idx})"
@@ -413,7 +540,6 @@ function renderBuildsConsole() {
     </button>
   `).join('');
 
-  // Render Right Detail Stage
   const active = projectsData[selectedProjectIndex];
   const mainImg = active.images[0] || { src: '', alt: 'CAD Schematic' };
 
@@ -485,7 +611,7 @@ function renderBuildsConsole() {
     <div class="pt-4 border-t border-cold-border flex items-center justify-between font-mono text-xs">
       <button 
         onclick="openInspectorModal(${selectedProjectIndex}, 0)"
-        class="px-5 py-2.5 bg-cold-pure hover:bg-cold-silver text-cold-void font-bold transition-all flex items-center gap-2"
+        class="px-5 py-2.5 bg-cold-pure hover:bg-cold-silver text-cold-void font-bold transition-all flex items-center gap-2 active:scale-95"
       >
         <i data-lucide="layers" class="w-4 h-4"></i>
         <span>INSPECT BLUEPRINT SLIDES (${active.images.length})</span>
@@ -503,7 +629,7 @@ function selectBuild(index) {
   renderBuildsConsole();
 }
 
-// 4. FULLSCREEN BLUEPRINT INSPECTION MODAL
+// 7. FULLSCREEN BLUEPRINT LIGHTBOX
 function openInspectorModal(pIdx, iIdx = 0) {
   modalActiveProjectIndex = pIdx;
   modalActiveImageIndex = iIdx;
@@ -579,7 +705,7 @@ function setupKeyboardShortcuts() {
   });
 }
 
-// 5. INSTANT COMMS CLIPBOARD COPY
+// 8. CLIPBOARD COPY ENGINE
 function copyEmailToClipboard() {
   const email = "aibel@tamu.edu";
   navigator.clipboard.writeText(email).then(() => {

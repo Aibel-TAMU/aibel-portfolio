@@ -13,12 +13,12 @@
   background-size: 40px 40px;
 }
 
-/* Huge Architectural Background Watermark */
+/* Giant Architectural Background Watermark */
 .watermark-text {
   position: absolute;
   top: 14%;
   right: -2%;
-  font-family: 'Cabinet Grotesk', 'Space Grotesk', 'Syne', sans-serif;
+  font-family: 'Cabinet Grotesk', 'Space Grotesk', sans-serif;
   font-size: clamp(8rem, 20vw, 22rem);
   font-weight: 800;
   line-height: 1;
@@ -26,6 +26,38 @@
   pointer-events: none;
   z-index: 0;
   letter-spacing: -0.05em;
+}
+
+/* SCROLL REVEAL ANIMATIONS (Spring-Loaded Pop Up) */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-up.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-card {
+  opacity: 0;
+  transform: translateY(35px) scale(0.98);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-card.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* 3D TILT CARD SETUP */
+.tilt-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.tilt-card:hover {
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 /* Precision Scrollbars */

@@ -11,15 +11,15 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Typography: Syne, Space Grotesk, Inter & JetBrains Mono -->
+  <!-- High-Impact Architecture & Engineering Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- Muted Cold Titanium Palette -->
+  <!-- Cold Titanium Palette Configuration -->
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -37,12 +37,13 @@
               slate: '#8b9bb4',
               silver: '#cbd5e1',
               pure: '#f8fafc',
-              safety: '#ff4d00', /* Flight-test safety orange (used only as surgical accents) */
+              safety: '#ff4d00', /* International flight-test orange */
+              safetyGlow: 'rgba(255, 77, 0, 0.25)',
               ice: '#38bdf8'
             }
           },
           fontFamily: {
-            display: ['Syne', 'Space Grotesk', 'sans-serif'],
+            display: ['Cabinet Grotesk', 'Space Grotesk', 'sans-serif'],
             sans: ['Inter', 'system-ui', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace'],
           }
@@ -54,14 +55,15 @@
 </head>
 <body class="bg-cold-void text-cold-slate font-sans antialiased selection:bg-cold-safety selection:text-white relative min-h-screen overflow-x-hidden">
 
-  <!-- Clean Structural Wire Grid Background -->
+  <!-- Dynamic Background Canvas & Engineering Grid -->
+  <canvas id="ambient-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
   <div class="fixed inset-0 pointer-events-none z-0 engineering-grid"></div>
 
-  <!-- TOP HUD BAR -->
+  <!-- STICKY TELEMETRY HUD NAVBAR -->
   <header class="sticky top-0 z-50 backdrop-blur-md bg-cold-void/90 border-b border-cold-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
-      <!-- Identifier -->
+      <!-- Brand Callout -->
       <a href="#" class="flex items-center gap-3 group">
         <div class="w-8 h-8 bg-cold-gunmetal border border-cold-borderLight flex items-center justify-center font-mono font-bold text-cold-pure text-xs group-hover:border-cold-safety transition-colors">
           AJ
@@ -74,10 +76,10 @@
         </div>
       </a>
 
-      <!-- Quick Telemetry Teleprompter -->
+      <!-- Live Telemetry Coordinates Banner -->
       <div class="hidden lg:flex items-center gap-6 font-mono text-[11px] text-cold-subtle">
         <div class="flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
           <span class="text-cold-slate">COLLEGE STATION, TX</span>
         </div>
         <span class="text-cold-border">/</span>
@@ -90,13 +92,13 @@
         </div>
       </div>
 
-      <!-- Navigation & Action -->
+      <!-- Quick Nav Links -->
       <nav class="flex items-center gap-6 font-mono text-xs">
         <a href="#telemetry" class="text-cold-slate hover:text-cold-pure transition-colors">
           <span class="text-cold-subtle">01.</span> TELEMETRY
         </a>
         <a href="#architecture" class="text-cold-slate hover:text-cold-pure transition-colors">
-          <span class="text-cold-subtle">02.</span> BUS TOPOLOGY
+          <span class="text-cold-subtle">02.</span> BUS
         </a>
         <a href="#builds" class="text-cold-slate hover:text-cold-pure transition-colors">
           <span class="text-cold-subtle">03.</span> BUILDS
@@ -104,7 +106,7 @@
         <a href="#dossier" class="text-cold-slate hover:text-cold-pure transition-colors">
           <span class="text-cold-subtle">04.</span> DOSSIER
         </a>
-        <a href="#contact" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-cold-pure hover:bg-cold-silver text-cold-void font-bold transition-all">
+        <a href="#contact" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-cold-pure hover:bg-cold-silver text-cold-void font-bold transition-all shadow-md active:scale-95">
           <span>CONTACT</span>
           <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
         </a>
@@ -113,74 +115,78 @@
     </div>
   </header>
 
-  <!-- HERO SECTION: ARCHITECTURAL TYPOGRAPHY -->
+  <!-- HERO SECTION: OVERSIZED ARCHITECTURAL TYPOGRAPHY & COUNT-UPS -->
   <section class="relative z-10 pt-16 pb-20 md:pt-24 md:pb-32 border-b border-cold-border overflow-hidden">
-    <!-- Architectural Watermark Numerals -->
+    <!-- Oversized Background Watermark -->
     <div class="watermark-text select-none">TAMU//29</div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
       <div class="max-w-4xl">
         
-        <!-- Status Indicator -->
-        <div class="inline-flex items-center gap-2 px-3 py-1 bg-cold-gunmetal border border-cold-border font-mono text-xs mb-8">
-          <span class="w-2 h-2 rounded-full bg-cold-safety"></span>
+        <!-- Live Status Pill -->
+        <div class="reveal-up inline-flex items-center gap-2 px-3 py-1 bg-cold-gunmetal border border-cold-border font-mono text-xs mb-8">
+          <span class="w-2 h-2 rounded-full bg-cold-safety animate-ping"></span>
           <span class="text-cold-pure font-bold">SYSTEMS INTEGRATION &amp; TEST ENGINEERING</span>
           <span class="text-cold-subtle">|</span>
           <span class="text-cold-slate">AVAILABLE SPRING / SUMMER 2027 CO-OP</span>
         </div>
 
-        <!-- Big Bold Title -->
-        <h1 class="text-5xl sm:text-7xl lg:text-8xl font-display font-extrabold text-cold-pure uppercase tracking-tight leading-[0.9] mb-8">
+        <!-- Giant Punchy Headline -->
+        <h1 class="reveal-up text-5xl sm:text-7xl lg:text-8xl font-display font-extrabold text-cold-pure uppercase tracking-tight leading-[0.9] mb-8">
           Mechanical Dynamics. <br>
           <span class="text-cold-subtle">Deterministic</span> Firmware. <br>
           <span class="text-cold-pure underline decoration-cold-safety decoration-2 underline-offset-8">Data Acquisition.</span>
         </h1>
 
-        <!-- High-Impact Bio -->
-        <p class="text-lg sm:text-xl text-cold-slate leading-relaxed font-normal max-w-3xl mb-12">
-          Mechanical Engineering sophomore at <strong class="text-cold-pure font-medium">Texas A&M University</strong> minoring in Electrical Engineering. Test Engineer for TAMU's <strong class="text-cold-pure font-medium">SAE Baja</strong> and <strong class="text-cold-pure font-medium">Naval Design</strong> teams. I architect vehicle subsystems from finite element stress models through high-speed CAN FD firmware down to physical sensor validation on the track.
+        <!-- Crisp, High-Impact Bio -->
+        <p class="reveal-up text-lg sm:text-xl text-cold-slate leading-relaxed font-normal max-w-3xl mb-12">
+          Sophomore Mechanical Engineer &amp; EE Minor @ <strong class="text-cold-pure font-medium">Texas A&M University</strong>. Controls &amp; DAQ Test Lead for <strong class="text-cold-pure font-medium">SAE Baja</strong> &amp; <strong class="text-cold-pure font-medium">Naval Design</strong>. From structural FEA and carbon-fiber fabrication to custom CAN FD daughterboards and FreeRTOS logging loops — I build physical machines that perform under load.
         </p>
 
-        <!-- Metrics Strip -->
+        <!-- Bold Animated Metric Cards -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 font-mono">
-          <div class="p-4 bg-cold-gunmetal border border-cold-border">
+          
+          <div class="reveal-up p-5 bg-cold-gunmetal border border-cold-border tilt-card transition-all" data-tilt>
             <span class="text-[10px] text-cold-subtle block uppercase tracking-wider">Cumulative GPA</span>
-            <span class="text-3xl font-extrabold text-cold-pure block mt-1">4.00</span>
+            <span class="text-3xl font-extrabold text-cold-pure block mt-1">
+              <span class="counter" data-target="4.00" data-decimals="2">0.00</span>
+            </span>
             <span class="text-[11px] text-cold-slate mt-0.5 block">Texas A&M Honors</span>
           </div>
 
-          <div class="p-4 bg-cold-gunmetal border border-cold-border">
-            <span class="text-[10px] text-cold-subtle block uppercase tracking-wider">Subteams &amp; Role</span>
+          <div class="reveal-up p-5 bg-cold-gunmetal border border-cold-border tilt-card transition-all" data-tilt>
+            <span class="text-[10px] text-cold-subtle block uppercase tracking-wider">Field Subteams</span>
             <span class="text-2xl font-bold text-cold-pure block mt-1 truncate">SAE Baja</span>
             <span class="text-[11px] text-cold-slate mt-0.5 block">Controls &amp; DAQ Lead</span>
           </div>
 
-          <div class="p-4 bg-cold-gunmetal border border-cold-border">
+          <div class="reveal-up p-5 bg-cold-gunmetal border border-cold-border tilt-card transition-all" data-tilt>
             <span class="text-[10px] text-cold-subtle block uppercase tracking-wider">Bus Protocol</span>
             <span class="text-2xl font-bold text-cold-pure block mt-1">CAN FD</span>
             <span class="text-[11px] text-cold-slate mt-0.5 block">SPI · I2C · BLE · UDP</span>
           </div>
 
-          <div class="p-4 bg-cold-gunmetal border border-cold-border">
+          <div class="reveal-up p-5 bg-cold-gunmetal border border-cold-border tilt-card transition-all" data-tilt>
             <span class="text-[10px] text-cold-subtle block uppercase tracking-wider">Simulation Stack</span>
             <span class="text-2xl font-bold text-cold-pure block mt-1">ANSYS</span>
             <span class="text-[11px] text-cold-slate mt-0.5 block">SolidWorks FEA / CFD</span>
           </div>
+
         </div>
 
-        <!-- Quick Launch CTAs -->
-        <div class="flex flex-wrap items-center gap-4 font-mono text-xs">
-          <a href="#telemetry" class="px-6 py-3.5 bg-cold-pure hover:bg-cold-silver text-cold-void font-bold transition-all flex items-center gap-2">
-            <span>INSPECT CHASSIS TELEMETRY</span>
+        <!-- Quick Action Row -->
+        <div class="reveal-up flex flex-wrap items-center gap-4 font-mono text-xs">
+          <a href="#telemetry" class="px-6 py-3.5 bg-cold-pure hover:bg-cold-silver text-cold-void font-bold transition-all flex items-center gap-2 shadow-lg active:scale-95">
+            <span>INSPECT LIVE TELEMETRY</span>
             <i data-lucide="activity" class="w-4 h-4 text-cold-safety"></i>
           </a>
 
-          <a href="#builds" class="px-6 py-3.5 bg-cold-gunmetal hover:bg-cold-titanium text-cold-pure border border-cold-border transition-all flex items-center gap-2">
+          <a href="#builds" class="px-6 py-3.5 bg-cold-gunmetal hover:bg-cold-titanium text-cold-pure border border-cold-border transition-all flex items-center gap-2 active:scale-95">
             <span>EXPLORE FIELD BUILDS</span>
             <i data-lucide="arrow-down" class="w-4 h-4 text-cold-subtle"></i>
           </a>
 
-          <a href="assets/resume.pdf" download class="px-6 py-3.5 bg-cold-gunmetal hover:bg-cold-titanium text-cold-pure border border-cold-border transition-all flex items-center gap-2"[cite: 1]>
+          <a href="assets/resume.pdf" download class="px-6 py-3.5 bg-cold-gunmetal hover:bg-cold-titanium text-cold-pure border border-cold-border transition-all flex items-center gap-2 active:scale-95"[cite: 1]>
             <i data-lucide="file-text" class="w-4 h-4 text-cold-subtle"></i>
             <span>RESUME (PDF)</span>
           </a>
@@ -190,26 +196,26 @@
     </div>
   </section>
 
-  <!-- MOTEC-STYLE CHASSIS TELEMETRY REPLAY CONSOLE -->
+  <!-- MOTEC-STYLE CHASSIS TELEMETRY DECK -->
   <section id="telemetry" class="relative z-10 py-16 md:py-24 border-b border-cold-border bg-cold-gunmetal/30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+      <div class="reveal-up flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>
           <div class="font-mono text-xs text-cold-safety font-bold uppercase tracking-widest mb-1">
-            01 // ON-CAR TELEMETRY LOG
+            01 // LIVE CHASSIS DYNAMICS
           </div>
           <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-cold-pure uppercase">
             Synchronized Vehicle Telemetry Replay
           </h2>
           <p class="text-cold-slate text-sm mt-2 max-w-2xl font-sans">
-            Directly modeled from Texas A&M SAE Baja test logs. Scrub the timeline to inspect synchronized lateral vs. longitudinal G-forces on the friction circle, primary/secondary CVT clutch shift curves, and ground velocity.
+            Directly modeled from Texas A&M SAE Baja telemetry logs. Scrub the timeline to inspect synchronized G-G friction circle behavior, CVT primary vs. secondary clutch shift curves, and GPS velocity.
           </p>
         </div>
 
-        <!-- Telemetry Player Controls -->
+        <!-- Telemetry Controls -->
         <div class="flex items-center gap-3 font-mono text-xs bg-cold-gunmetal p-2 border border-cold-border">
-          <button id="telemetry-play-btn" onclick="toggleTelemetryPlayback()" class="px-3 py-1.5 bg-cold-pure hover:bg-cold-silver text-cold-void font-bold flex items-center gap-1.5 transition-all">
+          <button id="telemetry-play-btn" onclick="toggleTelemetryPlayback()" class="px-3 py-1.5 bg-cold-pure hover:bg-cold-silver text-cold-void font-bold flex items-center gap-1.5 transition-all active:scale-95">
             <i data-lucide="play" class="w-3.5 h-3.5" id="telemetry-play-icon"></i>
             <span id="telemetry-play-label">PLAY RUN</span>
           </button>
@@ -218,27 +224,27 @@
         </div>
       </div>
 
-      <!-- Scrubber Track Slider -->
-      <div class="p-4 bg-cold-gunmetal border border-cold-border mb-6 font-mono text-xs">
+      <!-- Scrubber Slider -->
+      <div class="reveal-up p-4 bg-cold-gunmetal border border-cold-border mb-6 font-mono text-xs">
         <div class="flex justify-between items-center mb-2 text-cold-subtle text-[11px]">
           <span>RUN SECTOR: 0–350 FT ACCEL &amp; SLALOM</span>
-          <span class="text-cold-pure font-bold">100 Hz RTOS SAMPLING</span>
+          <span class="text-cold-pure font-bold">100 Hz DETERMINISTIC SAMPLING</span>
         </div>
         <input type="range" id="telemetry-scrubber" min="0" max="12" step="0.05" value="0" class="w-full h-1.5 bg-cold-border appearance-none cursor-pointer accent-cold-safety">
         <div class="flex justify-between text-[10px] text-cold-subtle mt-2">
           <span>0.0s (Launch)</span>
           <span>3.2s (CVT Shift-Out)</span>
           <span>6.8s (Slalom Entry)</span>
-          <span>9.5s (High Lateral G)</span>
+          <span>9.5s (Peak Lateral G)</span>
           <span>12.0s (Finish)</span>
         </div>
       </div>
 
-      <!-- Main Telemetry Instrumentation Grid -->
+      <!-- Live Dual Instrumentation Stage -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         <!-- Left: G-G Friction Circle Canvas (4 Cols) -->
-        <div class="lg:col-span-4 bg-cold-gunmetal border border-cold-border p-5 flex flex-col justify-between">
+        <div class="reveal-card lg:col-span-4 bg-cold-gunmetal border border-cold-border p-5 flex flex-col justify-between tilt-card" data-tilt>
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-cold-border font-mono text-xs">
             <span class="text-cold-pure font-bold flex items-center gap-2">
               <i data-lucide="compass" class="w-4 h-4 text-cold-safety"></i>
@@ -259,7 +265,7 @@
         </div>
 
         <!-- Right: Dual-Trace Waveform Canvas (8 Cols) -->
-        <div class="lg:col-span-8 bg-cold-gunmetal border border-cold-border p-5 flex flex-col justify-between">
+        <div class="reveal-card lg:col-span-8 bg-cold-gunmetal border border-cold-border p-5 flex flex-col justify-between tilt-card" data-tilt>
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-cold-border font-mono text-xs">
             <div class="flex items-center gap-3">
               <span class="text-cold-pure font-bold flex items-center gap-2">
@@ -275,12 +281,10 @@
             </div>
           </div>
 
-          <!-- Synchronized Trace Canvas -->
           <div class="w-full bg-cold-void border border-cold-border p-2 h-[320px]">
             <canvas id="waveform-canvas" width="680" height="320" class="w-full h-full"></canvas>
           </div>
 
-          <!-- Bottom Metric Readouts -->
           <div class="pt-3 mt-3 border-t border-cold-border grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-[11px]">
             <div>
               <span class="text-cold-subtle block text-[10px]">VEHICLE SPEED</span>
@@ -310,7 +314,7 @@
   <section id="architecture" class="relative z-10 py-16 md:py-24 border-b border-cold-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <div class="max-w-3xl mb-12">
+      <div class="reveal-up max-w-3xl mb-12">
         <div class="font-mono text-xs text-cold-safety font-bold uppercase tracking-widest mb-1">
           02 // DISTRIBUTED VEHICLE BUS
         </div>
@@ -318,18 +322,18 @@
           CAN FD Nodal Network Topology
         </h2>
         <p class="text-cold-slate text-sm mt-2">
-          Interactive schematic of the decentralized 2 Mbps CAN FD network deployed on the 2026–2027 vehicle build. Click any node below to inspect message IDs, sample rates, transceiver hardware, and physical payload formats.
+          Interactive schematic of the decentralized 2 Mbps CAN FD network deployed on our vehicle build. Click any node below to inspect message IDs, sample rates, transceiver hardware, and physical payload formats.
         </p>
       </div>
 
       <!-- Node Switcher Matrix -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 font-mono text-xs" id="can-node-selector">
-        <!-- Rendered dynamically via script.js -->
+      <div class="reveal-up grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 font-mono text-xs" id="can-node-selector">
+        <!-- Injected via script.js -->
       </div>
 
       <!-- Active Node Deep Spec Card -->
-      <div class="bg-cold-gunmetal border border-cold-border p-6 shadow-xl" id="can-node-detail">
-        <!-- Populated dynamically via script.js -->
+      <div class="reveal-card bg-cold-gunmetal border border-cold-border p-6 shadow-xl tilt-card" id="can-node-detail" data-tilt>
+        <!-- Injected dynamically via script.js -->
       </div>
 
     </div>
@@ -339,7 +343,7 @@
   <section id="builds" class="relative z-10 py-16 md:py-24 border-b border-cold-border bg-cold-gunmetal/20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <div class="max-w-3xl mb-12">
+      <div class="reveal-up max-w-3xl mb-12">
         <div class="font-mono text-xs text-cold-safety font-bold uppercase tracking-widest mb-1">
           03 // SUBSYSTEM PORTFOLIO
         </div>
@@ -355,12 +359,12 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         <!-- Left Subsystem List (4 Cols) -->
-        <div class="lg:col-span-4 space-y-2 font-mono text-xs" id="builds-nav-list">
-          <!-- Populated by script.js -->
+        <div class="reveal-up lg:col-span-4 space-y-2 font-mono text-xs" id="builds-nav-list">
+          <!-- Injected via script.js -->
         </div>
 
         <!-- Right Active Detail Stage (8 Cols) -->
-        <div class="lg:col-span-8 bg-cold-gunmetal border border-cold-border p-6 shadow-2xl relative" id="builds-detail-stage">
+        <div class="reveal-card lg:col-span-8 bg-cold-gunmetal border border-cold-border p-6 shadow-2xl relative tilt-card" id="builds-detail-stage" data-tilt>
           <!-- Populated dynamically via script.js -->
         </div>
 
@@ -376,7 +380,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         <!-- Left: Summary Checklist (4 Cols) -->
-        <div class="lg:col-span-4 space-y-4">
+        <div class="reveal-up lg:col-span-4 space-y-4">
           <div class="font-mono text-xs text-cold-safety font-bold uppercase tracking-widest mb-1">
             04 // VERIFIED CANDIDACY
           </div>
@@ -415,7 +419,7 @@
 
           <!-- Document Download Actions -->
           <div class="space-y-2 font-mono text-xs pt-4">
-            <a href="assets/resume.pdf" download class="w-full flex items-center justify-between p-3.5 bg-cold-pure hover:bg-cold-silver text-cold-void font-bold transition-all"[cite: 1]>
+            <a href="assets/resume.pdf" download class="w-full flex items-center justify-between p-3.5 bg-cold-pure hover:bg-cold-silver text-cold-void font-bold transition-all shadow-md active:scale-95"[cite: 1]>
               <span class="flex items-center gap-2">
                 <i data-lucide="download" class="w-4 h-4"></i>
                 <span>DOWNLOAD RESUME (PDF)</span>
@@ -423,7 +427,7 @@
               <span>RAW</span>
             </a>
 
-            <a href="assets/design-portfolio.pdf" download class="w-full flex items-center justify-between p-3.5 bg-cold-gunmetal hover:bg-cold-titanium text-cold-pure border border-cold-border transition-colors"[cite: 1]>
+            <a href="assets/design-portfolio.pdf" download class="w-full flex items-center justify-between p-3.5 bg-cold-gunmetal hover:bg-cold-titanium text-cold-pure border border-cold-border transition-colors active:scale-95"[cite: 1]>
               <span class="flex items-center gap-2">
                 <i data-lucide="file-text" class="w-4 h-4 text-cold-subtle"></i>
                 <span>Design Portfolio &amp; CAD Logs</span>
@@ -431,7 +435,7 @@
               <span class="text-cold-subtle">PDF</span>
             </a>
 
-            <a href="assets/transcript-summary.pdf" download class="w-full flex items-center justify-between p-3.5 bg-cold-gunmetal hover:bg-cold-titanium text-cold-pure border border-cold-border transition-colors"[cite: 1]>
+            <a href="assets/transcript-summary.pdf" download class="w-full flex items-center justify-between p-3.5 bg-cold-gunmetal hover:bg-cold-titanium text-cold-pure border border-cold-border transition-colors active:scale-95"[cite: 1]>
               <span class="flex items-center gap-2">
                 <i data-lucide="award" class="w-4 h-4 text-cold-subtle"></i>
                 <span>Academic Record &amp; Transcripts</span>
@@ -442,7 +446,7 @@
         </div>
 
         <!-- Right: Embedded Resume Preview (8 Cols) -->
-        <div class="lg:col-span-8 bg-cold-gunmetal border border-cold-border p-4 flex flex-col h-[650px] shadow-2xl">
+        <div class="reveal-card lg:col-span-8 bg-cold-gunmetal border border-cold-border p-4 flex flex-col h-[650px] shadow-2xl">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-cold-border font-mono text-xs">
             <div class="flex items-center gap-2 text-cold-pure">
               <span class="w-2 h-2 rounded-full bg-cold-safety"></span>
@@ -473,7 +477,7 @@
   <footer id="contact" class="relative z-10 py-16 bg-cold-void">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <div class="p-8 sm:p-12 bg-cold-gunmetal border border-cold-border relative overflow-hidden">
+      <div class="reveal-up p-8 sm:p-12 bg-cold-gunmetal border border-cold-border relative overflow-hidden">
         
         <div class="max-w-3xl relative z-10">
           <div class="inline-flex items-center gap-2 px-3 py-1 bg-cold-titanium border border-cold-border text-cold-pure text-xs font-mono mb-4">
@@ -490,22 +494,22 @@
           </p>
 
           <div class="mt-8 flex flex-wrap items-center gap-3 font-mono text-xs">
-            <button onclick="copyEmailToClipboard()" id="copy-email-btn" class="px-5 py-3.5 bg-cold-pure hover:bg-cold-silver text-cold-void font-bold transition-all flex items-center gap-2 shadow-lg">
+            <button onclick="copyEmailToClipboard()" id="copy-email-btn" class="px-5 py-3.5 bg-cold-pure hover:bg-cold-silver text-cold-void font-bold transition-all flex items-center gap-2 shadow-lg active:scale-95">
               <i data-lucide="copy" class="w-4 h-4" id="copy-icon"></i>
               <span id="copy-text">COPY: aibel@tamu.edu</span>
             </button>
 
-            <a href="mailto:aibel@tamu.edu" class="px-5 py-3.5 bg-cold-titanium hover:bg-cold-card text-cold-pure border border-cold-border flex items-center gap-2 transition-all">
+            <a href="mailto:aibel@tamu.edu" class="px-5 py-3.5 bg-cold-titanium hover:bg-cold-card text-cold-pure border border-cold-border flex items-center gap-2 transition-all active:scale-95">
               <i data-lucide="send" class="w-4 h-4 text-cold-subtle"></i>
               <span>LAUNCH CLIENT</span>
             </a>
 
-            <a href="https://linkedin.com/in/aibel-jomon" target="_blank" rel="noopener noreferrer" class="px-5 py-3.5 bg-cold-titanium hover:bg-cold-card text-cold-pure border border-cold-border flex items-center gap-2 transition-all">
+            <a href="https://linkedin.com/in/aibel-jomon" target="_blank" rel="noopener noreferrer" class="px-5 py-3.5 bg-cold-titanium hover:bg-cold-card text-cold-pure border border-cold-border flex items-center gap-2 transition-all active:scale-95">
               <i data-lucide="linkedin" class="w-4 h-4 text-sky-400"></i>
               <span>LINKEDIN</span>
             </a>
 
-            <a href="https://github.com/aibeljomon" target="_blank" rel="noopener noreferrer" class="px-5 py-3.5 bg-cold-titanium hover:bg-cold-card text-cold-pure border border-cold-border flex items-center gap-2 transition-all">
+            <a href="https://github.com/aibeljomon" target="_blank" rel="noopener noreferrer" class="px-5 py-3.5 bg-cold-titanium hover:bg-cold-card text-cold-pure border border-cold-border flex items-center gap-2 transition-all active:scale-95">
               <i data-lucide="github" class="w-4 h-4 text-cold-pure"></i>
               <span>GITHUB</span>
             </a>
