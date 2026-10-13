@@ -1,507 +1,394 @@
-let activeIndex = 0;
-let isDragging = false;
-let startX = 0;
-let autoCycleTimer = null;
-const AUTO_CYCLE_INTERVAL = 3500; // 3.5 Seconds per slide
+/* =========================================================================
+   AIBEL JOMON PORTFOLIO ENGINE // SYSTEMS, CONTROLS & TEST
+   ========================================================================= */
 
-function renderProjects() {
-  const container = document.getElementById('projects-container');
-  if (!container || typeof projectsData === 'undefined') return;
+// State Management
+let currentFilter = 'all';
+let modalActiveProjectIndex = 0;
+let modalActiveImageIndex = 0;
 
-  // 1. FILTER FOR SHOWCASE PROJECTS ONLY (Top 3D Carousel Ring)
-  const showcaseProjects = projectsData.filter(p => p.showcase !== false);
+// Initialize on DOM Ready
+document.addEventListener('DOMContentLoaded', () => {
+  initSystemClock();
+  initLucideIcons();
+  initCadCanvas();
+  renderProjectMatrix();
+  setupFilterButtons();
+  setupKeyboardShortcuts();
+});
 
-  // 2. Render Showcase Projects into 3D Ring
-  container.innerHTML = showcaseProjects.map((project, pIndex) => `
-    <article 
-      data-index="${pIndex}"
-      class="project-card absolute w-[88%] sm:w-[410px] bg-eng-dark rounded-2xl border border-eng-border shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col cursor-pointer select-none"
-      onclick="handleCardClick(${pIndex})"
-    >
-      
-      <!-- Image Carousel Component (Clicking photo cycles pictures) -->
-      <div 
-        class="carousel relative w-full aspect-[16/9] bg-eng-panel border-b border-eng-border overflow-hidden cursor-pointer group/img" 
-        id="carousel-${pIndex}"
-        onclick="handleImageClick(event, ${pIndex})"
-      >
-        <div class="carousel-track w-full h-full relative">
-          ${project.images.map((img, i) => `
-            <img src="${img.src}" alt="${img.alt}" class="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-500 ease-in-out ${i === 0 ? 'active opacity-100' : ''}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'225\' viewBox=\'0 0 400 225\'><rect width=\'100%\' height=\'100%\' fill=\'%2311151a\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23a3b1c2\' font-family=\'monospace\' font-size=\'14\'>Hardware Build Image</text></svg>'"
-          `).join('')}
-        </div>
-        
-        <!-- Hover Hint Overlay -->
-        <div class="absolute top-2 right-2 px-2 py-1 rounded bg-eng-dark/80 backdrop-blur-sm text-[10px] font-mono text-white/80 opacity-0 group-hover/img:opacity-100 transition-opacity pointer-events-none">
-          Click photo to flip ➔
-        </div>
-
-        ${project.images.length > 1 ? `
-          <div class="carousel-dots absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-20"></div>
-        ` : ''}
-      </div>
-
-      <!-- Showcase Content Area -->
-      <div class="p-5 flex-grow flex flex-col justify-between">
-        <div>
-          <h3 class="text-xl font-bold tracking-tight text-white leading-tight mb-2.5 group-hover:text-aggie-maroon-light transition-colors">${project.title}</h3>
-          
-          <div class="flex flex-wrap gap-1.5 mb-3.5 font-mono">
-            ${project.tags.map(tag => `<span class="px-2.5 py-1 bg-eng-panel rounded-full text-[11px] text-white/90 font-semibold border border-eng-border">${tag}</span>`).join('')}
-          </div>
-          
-          <p class="text-xs text-eng-text leading-relaxed line-clamp-3">${project.description}</p>
-        </div>
-
-        <div class="mt-4 pt-3 border-t border-eng-border flex items-center justify-between text-[11px] font-mono">
-          <a href="#detail-${pIndex}" onclick="event.stopPropagation()" class="text-aggie-maroon-light hover:text-white transition-colors font-bold flex items-center gap-1">
-            <span>VIEW DETAILED BREAKDOWN</span>
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" /></svg>
-          </a>
-        </div>
-      </div>
-
-    </article>
-  `).join('');
-
-  // 3. Render ALL projects into Lower Technical Index
-  renderDetailedProjectSections();
-
-  initImageCarousels();
-  update3DPositions();
-  setup3DControls();
-  setupDragSwipe();
-  setupAutoCycle();
-  setupExpandableContact();
+// Refresh Lucide Icons helper
+function initLucideIcons() {
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
 }
 
-// EXPANDABLE CONTACT & RESUME CONTROLLER
-function setupExpandableContact() {
-  const footer = document.getElementById('contact');
-  const triggerBar = document.getElementById('contact-trigger');
-  const expandable = document.getElementById('contact-expandable');
-  const btnText = document.getElementById('dossier-btn-text');
-  const btnIcon = document.getElementById('dossier-btn-icon');
-  const topContactBtns = document.querySelectorAll('a[href="#contact"]');
+// 1. LIVE HUD CLOCK (College Station / Bryan CDT)
+function initSystemClock() {
+  const clockEl = document.getElementById('system-clock');
+  if (!clockEl) return;
 
-  if (!footer || !expandable) return;
-
-  let isExpanded = false;
-  let hasAutoExpanded = false;
-
-  function expandFooter() {
-    expandable.style.maxHeight = '950px';
-    expandable.style.opacity = '1';
-    if (btnText) btnText.textContent = 'COLLAPSE HUB';
-    if (btnIcon) btnIcon.textContent = '[-]';
-    isExpanded = true;
-  }
-
-  function collapseFooter() {
-    expandable.style.maxHeight = '0px';
-    expandable.style.opacity = '0';
-    if (btnText) btnText.textContent = 'CLICK HERE';
-    if (btnIcon) btnIcon.textContent = '[+]';
-    isExpanded = false;
-  }
-
-  function toggleFooter(e) {
-    if (e) e.stopPropagation();
-    if (isExpanded) {
-      collapseFooter();
-    } else {
-      expandFooter();
-    }
-  }
-
-  // 1. Direct Click Toggle on Bar / Button
-  if (triggerBar) {
-    triggerBar.onclick = (e) => toggleFooter(e);
-  }
-
-  // 2. Smooth Auto-Expand On First Scroll To Bottom
-  window.addEventListener('scroll', () => {
-    if (hasAutoExpanded) return;
-
-    const scrollPosition = window.innerHeight + window.scrollY;
-    const bodyHeight = document.body.offsetHeight;
-
-    if (bodyHeight - scrollPosition <= 80) {
-      expandFooter();
-      hasAutoExpanded = true; 
-    }
-  });
-
-  // 3. Navbar "INITIATE CONTACT" Link Support
-  topContactBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      expandFooter();
-      footer.scrollIntoView({ behavior: 'smooth' });
+  function update() {
+    const now = new Date();
+    // Format to US Central Time
+    const timeStr = now.toLocaleTimeString('en-US', {
+      timeZone: 'America/Chicago',
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
     });
+    clockEl.textContent = `${timeStr} CDT`;
+  }
+  update();
+  setInterval(update, 1000);
+}
+
+// 2. INTERACTIVE CAD PARTICLES & NODES CANVAS
+function initCadCanvas() {
+  const canvas = document.getElementById('cad-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  let width = (canvas.width = window.innerWidth);
+  let height = (canvas.height = window.innerHeight);
+
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
   });
-}
 
-// AUTO-CYCLE ENGINE
-function setupAutoCycle() {
-  const section = document.getElementById('projects');
-  if (!section) return;
+  const nodes = [];
+  const nodeCount = Math.min(Math.floor(width / 35), 45);
 
-  function startTimer() {
-    if (autoCycleTimer) clearInterval(autoCycleTimer);
-    autoCycleTimer = setInterval(() => {
-      const showcaseProjects = projectsData.filter(p => p.showcase !== false);
-      activeIndex = (activeIndex >= showcaseProjects.length - 1) ? 0 : activeIndex + 1;
-      update3DPositions();
-    }, AUTO_CYCLE_INTERVAL);
+  for (let i = 0; i < nodeCount; i++) {
+    nodes.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      size: Math.random() * 1.5 + 1
+    });
   }
 
-  function stopTimer() {
-    if (autoCycleTimer) clearInterval(autoCycleTimer);
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+
+    // Draw connection lines
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < 140) {
+          const alpha = (1 - dist / 140) * 0.15;
+          ctx.strokeStyle = `rgba(142, 22, 32, ${alpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw nodes
+    nodes.forEach(n => {
+      n.x += n.vx;
+      n.y += n.vy;
+
+      if (n.x < 0 || n.x > width) n.vx *= -1;
+      if (n.y < 0 || n.y > height) n.vy *= -1;
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
   }
-
-  startTimer();
-
-  section.addEventListener('mouseenter', stopTimer);
-  section.addEventListener('mouseleave', startTimer);
+  draw();
 }
 
-// Renders lower detailed project list with directional toggle buttons for image carousels
-function renderDetailedProjectSections() {
-  const container = document.getElementById('detailed-projects-container');
+// 3. RENDER FULL PROJECT MATRIX
+function renderProjectMatrix() {
+  const container = document.getElementById('projects-grid');
   if (!container || typeof projectsData === 'undefined') return;
 
-  container.innerHTML = projectsData.map((project, pIndex) => `
-    <article id="detail-${pIndex}" class="bg-eng-panel rounded-2xl border border-eng-border p-6 md:p-8 relative overflow-hidden group hover:border-aggie-maroon-light/40 transition-colors">
-      
-      <!-- Header Row -->
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-eng-border">
-        <div>
-          <span class="font-mono text-xs text-aggie-maroon-light font-bold uppercase tracking-wider">
-            ${project.showcase !== false ? 'FEATURED BUILD 0' + (pIndex + 1) : 'PROJECT LOG 0' + (pIndex + 1)}
-          </span>
-          <h3 class="text-2xl font-bold text-white mt-0.5">${project.title}</h3>
-        </div>
-        <div class="flex flex-wrap gap-2 font-mono">
-          ${project.tags.map(tag => `<span class="px-3 py-1 bg-eng-dark rounded-md text-xs font-semibold text-eng-text border border-eng-border">${tag}</span>`).join('')}
-        </div>
-      </div>
+  const filtered = currentFilter === 'all' 
+    ? projectsData 
+    : projectsData.filter(p => p.category === currentFilter);
 
-      <!-- Content Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  container.innerHTML = filtered.map((project) => {
+    // Determine real index in raw projectsData
+    const rawIndex = projectsData.findIndex(p => p.id === project.id);
+    const mainImg = project.images[0] || { src: '', alt: 'CAD Render' };
+
+    return `
+      <article class="project-card-container bg-surface-900 border border-surface-border rounded-2xl overflow-hidden flex flex-col justify-between" id="card-${project.id}">
         
-        <!-- Left Columns: Technical Overview & Execution -->
-        <div class="lg:col-span-2 space-y-4">
-          <div>
-            <h4 class="font-mono text-xs text-white uppercase font-bold tracking-wider mb-2">Technical Overview</h4>
-            <p class="text-sm text-eng-text leading-relaxed">${project.description}</p>
-          </div>
-
-          ${project.stackBreakdown ? `
-            <div class="pt-2">
-              <h4 class="font-mono text-xs text-white uppercase font-bold tracking-wider mb-2">Engineering Execution</h4>
-              <ul class="space-y-2 font-sans text-xs text-eng-text">
-                ${project.stackBreakdown.map(item => `
-                  <li class="flex items-start gap-2 bg-eng-dark/60 p-2.5 rounded border border-eng-border/50">
-                    <span class="text-aggie-maroon-light font-bold font-mono">[✓]</span>
-                    <span>${item}</span>
-                  </li>
-                `).join('')}
-              </ul>
-            </div>
-          ` : ''}
-        </div>
-
-        <!-- Right Column: Interactive Deck with Toggle Buttons -->
-        <div 
-          class="detail-carousel bg-eng-dark rounded-xl border border-eng-border p-3 flex flex-col items-center justify-between h-64 relative group/detailimg select-none"
-          id="detail-carousel-${pIndex}"
-        >
-          <!-- Image Container -->
-          <div 
-            class="carousel-track w-full flex-grow relative overflow-hidden rounded bg-eng-panel cursor-pointer"
-            onclick="handleDetailImageNav(event, ${pIndex}, 1)"
+        <!-- Card Image Stage -->
+        <div class="relative w-full aspect-[16/10] bg-surface-950 border-b border-surface-border overflow-hidden group/thumb cursor-pointer" onclick="openInspectorModal(${rawIndex}, 0)">
+          <img 
+            src="${mainImg.src}" 
+            alt="${mainImg.alt}"
+            class="w-full h-full object-contain p-2 group-hover/thumb:scale-105 transition-transform duration-500 ease-out"
+            onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'375\' viewBox=\'0 0 600 375\'><rect width=\'100%\' height=\'100%\' fill=\'%2307090c\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23500000\' font-family=\'monospace\' font-size=\'16\'>CAD SPEC SCHEMATIC</text></svg>'"
           >
-            ${project.images.map((img, i) => `
-              <img 
-                src="${img.src}" 
-                alt="${img.alt}" 
-                data-alt="${img.alt}"
-                class="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-500 ease-in-out ${i === 0 ? 'active opacity-100' : ''}" 
-                onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'225\' viewBox=\'0 0 400 225\'><rect width=\'100%\' height=\'100%\' fill=\'%2311151a\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23a3b1c2\' font-family=\'monospace\' font-size=\'14\'>Hardware Build Image</text></svg>'"
-              >
-            `).join('')}
+
+          <!-- Top Pill Overlays -->
+          <div class="absolute top-3 left-3 flex items-center gap-2">
+            <span class="px-2.5 py-1 rounded bg-surface-900/90 border border-surface-border text-slate-200 text-[10px] font-mono backdrop-blur-md">
+              ${project.team}
+            </span>
           </div>
 
-          <!-- SIDE TOGGLE BUTTONS (Rendered if > 1 image) -->
-          ${project.images.length > 1 ? `
-            <!-- Left Toggle Button -->
-            <button 
-              onclick="handleDetailImageNav(event, ${pIndex}, -1)" 
-              class="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-eng-dark/80 border border-eng-border text-white hover:bg-aggie-maroon hover:border-aggie-maroon-light transition-all flex items-center justify-center text-xs font-bold shadow-lg opacity-80 hover:opacity-100 hover:scale-110 active:scale-95"
-              aria-label="Previous Image"
-            >
-              ❮
-            </button>
+          <div class="absolute top-3 right-3">
+            <span class="px-2.5 py-1 rounded bg-aggie/90 border border-aggie-bright/60 text-white text-[10px] font-mono font-bold flex items-center gap-1 backdrop-blur-md">
+              <i data-lucide="camera" class="w-3 h-3"></i>
+              <span>${project.images.length} VIEWS</span>
+            </span>
+          </div>
 
-            <!-- Right Toggle Button -->
-            <button 
-              onclick="handleDetailImageNav(event, ${pIndex}, 1)" 
-              class="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-eng-dark/80 border border-eng-border text-white hover:bg-aggie-maroon hover:border-aggie-maroon-light transition-all flex items-center justify-center text-xs font-bold shadow-lg opacity-80 hover:opacity-100 hover:scale-110 active:scale-95"
-              aria-label="Next Image"
-            >
-              ❯
-            </button>
-          ` : ''}
-
-          <!-- Single Bottom Label Display -->
-          <span class="detail-img-label font-mono text-[10px] text-eng-text/70 text-center mt-2.5 line-clamp-1">
-            ${project.images[0].alt}
-          </span>
+          <!-- Bottom Hover Inspection Callout -->
+          <div class="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-surface-950 via-surface-950/80 to-transparent flex items-center justify-between opacity-0 group-hover/thumb:opacity-100 transition-opacity duration-300 font-mono text-[11px] text-slate-200">
+            <span class="flex items-center gap-1 text-red-300">
+              <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+              Click to Open Technical Inspector &amp; Blueprint Slides
+            </span>
+            <span class="text-slate-400">ESC TO CLOSE</span>
+          </div>
         </div>
 
-      </div>
+        <!-- Card Content Body -->
+        <div class="p-6 flex-grow flex flex-col justify-between">
+          <div>
+            <!-- Title & Timeline -->
+            <div class="flex items-start justify-between gap-4 mb-2">
+              <h3 class="text-xl font-bold text-white tracking-tight leading-snug hover:text-red-300 transition-colors">
+                ${project.title}
+              </h3>
+              <span class="text-xs font-mono text-slate-400 shrink-0 mt-0.5">${project.timeline}</span>
+            </div>
 
-    </article>
-  `).join('');
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              ${project.tags.map(t => `
+                <span class="px-2 py-0.5 rounded bg-surface-800 text-slate-300 text-[10px] font-mono border border-surface-border">
+                  \${t}
+                </span>
+              `).join('')}
+            </div>
+
+            <!-- Problem / Summary -->
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              ${project.summary}
+            </p>
+
+            <!-- Quick Specs Table Strip -->
+            <div class="rounded-xl bg-surface-950/70 border border-surface-border p-3 font-mono text-[11px] space-y-1.5 mb-4">
+              ${Object.entries(project.engineeringSpecs).slice(0, 3).map(([key, value]) => `
+                <div class="flex items-center justify-between text-slate-300">
+                  <span class="text-slate-400">\${key}:</span>
+                  <span class="text-white font-semibold text-right">\${value}</span>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Execution Bullet Preview -->
+            <div class="space-y-1.5 font-sans text-xs text-slate-300 mb-6">
+              ${project.executionHighlights.slice(0, 2).map(highlight => `
+                <div class="flex items-start gap-2">
+                  <span class="text-aggie-bright font-mono font-bold">›</span>
+                  <span>\${highlight}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Bottom Card Action Toolbar -->
+          <div class="pt-4 border-t border-surface-border/70 flex items-center justify-between font-mono text-xs">
+            <button 
+              onclick="openInspectorModal(${rawIndex}, 0)" 
+              class="px-4 py-2 rounded-lg bg-surface-800 hover:bg-aggie text-white transition-all flex items-center gap-2 border border-surface-border hover:border-aggie-bright"
+            >
+              <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+              <span>INSPECT CAD &amp; DATA (${project.images.length})</span>
+            </button>
+
+            <span class="text-[10px] text-slate-400">ID: ${project.id.toUpperCase()}</span>
+          </div>
+
+        </div>
+
+      </article>
+    `;
+  }).join('');
+
+  initLucideIcons();
 }
 
-// Photo Click Handler (Flipping through pictures)
-function handleImageClick(event, projectIndex) {
-  event.stopPropagation(); // Stops main card rotation
-  const carousel = document.getElementById(`carousel-${projectIndex}`);
-  if (!carousel) return;
-
-  const images = carousel.querySelectorAll('.carousel-track img');
-  if (images.length <= 1) return;
-
-  let activeImgIndex = Array.from(images).findIndex(img => img.classList.contains('active'));
-  let nextImgIndex = (activeImgIndex + 1) % images.length;
-
-  images.forEach((img, index) => {
-    img.classList.toggle('active', index === nextImgIndex);
-    img.classList.toggle('opacity-100', index === nextImgIndex);
-  });
-
-  const dots = carousel.querySelectorAll('.dot');
-  dots.forEach((dot, index) => {
-    dot.classList.toggle('bg-aggie-maroon-light', index === nextImgIndex);
-    dot.classList.toggle('scale-125', index === nextImgIndex);
-    dot.classList.toggle('bg-white/30', index !== nextImgIndex);
-  });
-}
-
-// 3D Curve Positioning Engine
-function update3DPositions() {
-  const cards = document.querySelectorAll('.project-card');
-  const total = cards.length;
-  const indicator = document.getElementById('project-count-indicator');
-
-  if (indicator) {
-    indicator.textContent = `FOCUSING BUILD ${activeIndex + 1} OF ${total}`;
-  }
-
-  cards.forEach((card, i) => {
-    let offset = (i - activeIndex + total) % total;
-    if (offset > total / 2) offset -= total;
-
-    card.style.transition = 'all 0.65s cubic-bezier(0.34, 1.45, 0.64, 1)';
-    
-    if (offset === 0) {
-      // CENTER ACTIVE CARD
-      card.style.transform = 'translate3d(0, 0, 180px) rotateY(0deg) scale(1.08)';
-      card.style.opacity = '1';
-      card.style.zIndex = '30';
-      card.style.filter = 'none';
-      card.style.borderColor = 'rgba(112, 0, 0, 0.9)';
-      card.style.boxShadow = '0 30px 60px -15px rgba(80, 0, 0, 0.45), 0 0 20px rgba(80, 0, 0, 0.2)';
-    } else if (offset === 1) {
-      // RIGHT CARD
-      card.style.transform = 'translate3d(70%, 15px, -180px) rotateY(-28deg) scale(0.82)';
-      card.style.opacity = '0.5';
-      card.style.zIndex = '20';
-      card.style.filter = 'brightness(0.6) contrast(1.1)';
-      card.style.borderColor = '#262d35';
-      card.style.boxShadow = 'none';
-    } else if (offset === -1) {
-      // LEFT CARD
-      card.style.transform = 'translate3d(-70%, 15px, -180px) rotateY(28deg) scale(0.82)';
-      card.style.opacity = '0.5';
-      card.style.zIndex = '20';
-      card.style.filter = 'brightness(0.6) contrast(1.1)';
-      card.style.borderColor = '#262d35';
-      card.style.boxShadow = 'none';
-    } else {
-      // REAR HIDDEN CARDS
-      const direction = offset > 0 ? 140 : -140;
-      card.style.transform = `translate3d(${direction}%, 40px, -380px) rotateY(${offset > 0 ? -45 : 45}deg) scale(0.6)`;
-      card.style.opacity = '0';
-      card.style.zIndex = '10';
-      card.style.filter = 'brightness(0.2)';
-    }
-  });
-
-  setupHoverEffect();
-}
-
-// Hover Response
-function setupHoverEffect() {
-  const cards = document.querySelectorAll('.project-card');
-  const total = cards.length;
-
-  cards.forEach((card, i) => {
-    let offset = (i - activeIndex + total) % total;
-    if (offset > total / 2) offset -= total;
-
-    card.onmouseenter = () => {
-      card.style.transition = 'all 0.35s cubic-bezier(0.25, 1, 0.5, 1)';
-      if (offset === 0) {
-        card.style.transform = 'translate3d(0, -12px, 240px) rotateY(0deg) scale(1.12)';
-      } else if (offset === 1) {
-        card.style.transform = 'translate3d(68%, 5px, -80px) rotateY(-18deg) scale(0.88)';
-        card.style.opacity = '0.85';
-        card.style.filter = 'brightness(0.9)';
-      } else if (offset === -1) {
-        card.style.transform = 'translate3d(-68%, 5px, -80px) rotateY(18deg) scale(0.88)';
-        card.style.opacity = '0.85';
-        card.style.filter = 'brightness(0.9)';
-      }
-    };
-
-    card.onmouseleave = () => {
-      update3DPositions();
-    };
-  });
-}
-
-function handleCardClick(index) {
-  if (activeIndex !== index) {
-    activeIndex = index;
-    update3DPositions();
-  }
-}
-
-// Mouse Drag & Touch Swiping
-function setupDragSwipe() {
-  const container = document.getElementById('projects-container');
-  if (!container) return;
-
-  container.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    startX = e.clientX;
-  });
-
-  window.addEventListener('mouseup', (e) => {
-    if (!isDragging) return;
-    isDragging = false;
-    const diffX = e.clientX - startX;
-    
-    if (Math.abs(diffX) > 40) {
-      const showcaseProjects = projectsData.filter(p => p.showcase !== false);
-      if (diffX < 0) {
-        activeIndex = (activeIndex >= showcaseProjects.length - 1) ? 0 : activeIndex + 1;
-      } else {
-        activeIndex = (activeIndex <= 0) ? showcaseProjects.length - 1 : activeIndex - 1;
-      }
-      update3DPositions();
-    }
-  });
-
-  container.addEventListener('touchstart', (e) => {
-    startX = e.touches[0].clientX;
-  });
-
-  container.addEventListener('touchend', (e) => {
-    const endX = e.changedTouches[0].clientX;
-    const diffX = endX - startX;
-    if (Math.abs(diffX) > 40) {
-      const showcaseProjects = projectsData.filter(p => p.showcase !== false);
-      if (diffX < 0) {
-        activeIndex = (activeIndex >= showcaseProjects.length - 1) ? 0 : activeIndex + 1;
-      } else {
-        activeIndex = (activeIndex <= 0) ? showcaseProjects.length - 1 : activeIndex - 1;
-      }
-      update3DPositions();
-    }
-  });
-}
-
-function setup3DControls() {
-  const prevBtn = document.getElementById('prev-project-btn');
-  const nextBtn = document.getElementById('next-project-btn');
-
-  if (prevBtn) {
-    prevBtn.onclick = () => {
-      const showcaseProjects = projectsData.filter(p => p.showcase !== false);
-      activeIndex = (activeIndex <= 0) ? showcaseProjects.length - 1 : activeIndex - 1;
-      update3DPositions();
-    };
-  }
-
-  if (nextBtn) {
-    nextBtn.onclick = () => {
-      const showcaseProjects = projectsData.filter(p => p.showcase !== false);
-      activeIndex = (activeIndex >= showcaseProjects.length - 1) ? 0 : activeIndex + 1;
-      update3DPositions();
-    };
-  }
-}
-
-// Dot Indicators Initializer
-function initImageCarousels() {
-  document.querySelectorAll('.carousel').forEach((carousel) => {
-    const images = carousel.querySelectorAll('.carousel-track img');
-    const dotsContainer = carousel.querySelector('.carousel-dots');
-    if (images.length <= 1 || !dotsContainer) return;
-    
-    dotsContainer.innerHTML = '';
-
-    images.forEach((_, index) => {
-      const dot = document.createElement('div');
-      dot.className = `dot w-2 h-2 rounded-full cursor-pointer transition-all ${index === 0 ? 'bg-aggie-maroon-light scale-125' : 'bg-white/30'}`;
-      dot.addEventListener('click', (e) => {
-        e.stopPropagation();
-        images.forEach((img, i) => {
-          img.classList.toggle('active', i === index);
-          img.classList.toggle('opacity-100', i === index);
-        });
-        const dots = dotsContainer.querySelectorAll('.dot');
-        dots.forEach((d, i) => {
-          d.classList.toggle('bg-aggie-maroon-light', i === index);
-          d.classList.toggle('scale-125', i === index);
-          d.classList.toggle('bg-white/30', i !== index);
-        });
+// 4. FILTER CONTROLS
+function setupFilterButtons() {
+  const buttons = document.querySelectorAll('.filter-btn');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => {
+        b.classList.remove('active', 'bg-aggie', 'text-white');
+        b.classList.add('text-slate-400');
       });
-      dotsContainer.appendChild(dot);
+      btn.classList.add('active', 'bg-aggie', 'text-white');
+      btn.classList.remove('text-slate-400');
+
+      currentFilter = btn.getAttribute('data-filter') || 'all';
+      renderProjectMatrix();
     });
   });
 }
 
-// Detail Section Photo Directional Navigation Handler
-function handleDetailImageNav(event, projectIndex, direction = 1) {
-  if (event) event.stopPropagation();
-  
-  const carousel = document.getElementById(`detail-carousel-${projectIndex}`);
-  if (!carousel) return;
+// 5. FULLSCREEN INSPECTOR MODAL CONTROLLER
+function openInspectorModal(projectIndex, imageIndex = 0) {
+  modalActiveProjectIndex = projectIndex;
+  modalActiveImageIndex = imageIndex;
 
-  const images = carousel.querySelectorAll('.carousel-track img');
-  const label = carousel.querySelector('.detail-img-label');
-  if (images.length <= 1) return;
+  const modal = document.getElementById('inspector-modal');
+  if (!modal || !projectsData[projectIndex]) return;
 
-  let activeImgIndex = Array.from(images).findIndex(img => img.classList.contains('active'));
-  let totalImages = images.length;
+  updateModalView();
 
-  // Calculate next index based on direction (-1 or +1)
-  let nextImgIndex = (activeImgIndex + direction + totalImages) % totalImages;
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden'; // Stop background scrolling
+  initLucideIcons();
+}
 
-  images.forEach((img, index) => {
-    img.classList.toggle('active', index === nextImgIndex);
-    img.classList.toggle('opacity-100', index === nextImgIndex);
-  });
+function closeInspectorModal() {
+  const modal = document.getElementById('inspector-modal');
+  if (!modal) return;
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+}
 
-  // Dynamically update the bottom label text
-  if (label && images[nextImgIndex]) {
-    label.textContent = images[nextImgIndex].getAttribute('data-alt') || images[nextImgIndex].alt;
+function updateModalView() {
+  const project = projectsData[modalActiveProjectIndex];
+  if (!project) return;
+
+  const currentImg = project.images[modalActiveImageIndex];
+  const activeImgEl = document.getElementById('modal-active-img');
+  const titleEl = document.getElementById('modal-project-title');
+  const counterEl = document.getElementById('modal-image-counter');
+  const captionEl = document.getElementById('modal-caption');
+  const thumbStrip = document.getElementById('modal-thumb-strip');
+
+  if (titleEl) titleEl.textContent = `${project.title} // TECHNICAL INSPECTOR`;
+  if (counterEl) counterEl.textContent = `SLIDE ${modalActiveImageIndex + 1} OF ${project.images.length}`;
+  if (captionEl) captionEl.textContent = currentImg.alt || "CAD Specification Drawing";
+
+  if (activeImgEl) {
+    activeImgEl.src = currentImg.src;
+    activeImgEl.alt = currentImg.alt;
+  }
+
+  // Render thumbnail strip
+  if (thumbStrip) {
+    thumbStrip.innerHTML = project.images.map((img, i) => `
+      <button 
+        onclick="navigateModalImageTo(${i})" 
+        class="w-16 h-12 rounded-lg border shrink-0 overflow-hidden bg-surface-950 transition-all ${i === modalActiveImageIndex ? 'border-aggie-bright ring-2 ring-aggie-bright/40 scale-105' : 'border-surface-border opacity-50 hover:opacity-100'}"
+        title="${img.alt}"
+      >
+        <img src="${img.src}" alt="${img.alt}" class="w-full h-full object-contain" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'64\' height=\'48\'><rect width=\'100%\' height=\'100%\' fill=\'%2307090c\'/></svg>'">
+      </button>
+    `).join('');
   }
 }
 
-document.addEventListener('DOMContentLoaded', renderProjects);
+function navigateModalImage(direction) {
+  const project = projectsData[modalActiveProjectIndex];
+  if (!project) return;
+
+  const total = project.images.length;
+  modalActiveImageIndex = (modalActiveImageIndex + direction + total) % total;
+  updateModalView();
+}
+
+function navigateModalImageTo(index) {
+  modalActiveImageIndex = index;
+  updateModalView();
+}
+
+// 6. KEYBOARD SHORTCUTS (Esc, Left, Right)
+function setupKeyboardShortcuts() {
+  window.addEventListener('keydown', (e) => {
+    const modal = document.getElementById('inspector-modal');
+    if (!modal || !modal.classList.contains('active')) return;
+
+    if (e.key === 'Escape') {
+      closeInspectorModal();
+    } else if (e.key === 'ArrowLeft') {
+      navigateModalImage(-1);
+    } else if (e.key === 'ArrowRight') {
+      navigateModalImage(1);
+    }
+  });
+
+  // Click outside to close modal
+  const modal = document.getElementById('inspector-modal');
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeInspectorModal();
+      }
+    });
+  }
+}
+
+// 7. INTERACTIVE RESUME MODAL HELPER
+function openResumeModal() {
+  const dossierSection = document.getElementById('dossier');
+  if (dossierSection) {
+    dossierSection.scrollIntoView({ behavior: 'smooth' });
+    showHudToast("NAVIGATED TO AUTHENTICATED DOSSIER");
+  }
+}
+
+// 8. CLIPBOARD COPY TOAST ENGINE
+function copyEmailToClipboard() {
+  const email = "aibel@tamu.edu";
+  navigator.clipboard.writeText(email).then(() => {
+    const copyText = document.getElementById('copy-text');
+    const copyIcon = document.getElementById('copy-icon');
+    
+    if (copyText) copyText.textContent = "COPIED TO CLIPBOARD!";
+    if (copyIcon) copyIcon.setAttribute('data-lucide', 'check');
+    initLucideIcons();
+
+    showHudToast(`COPIED [${email}] TO CLIPBOARD`);
+
+    setTimeout(() => {
+      if (copyText) copyText.textContent = `COPY: ${email}`;
+      if (copyIcon) copyIcon.setAttribute('data-lucide', 'copy');
+      initLucideIcons();
+    }, 3000);
+  }).catch(err => {
+    console.error('Copy failed: ', err);
+    window.location.href = `mailto:${email}`;
+  });
+}
+
+function showHudToast(message) {
+  const toast = document.getElementById('hud-toast');
+  const msgEl = document.getElementById('hud-toast-msg');
+  if (!toast || !msgEl) return;
+
+  msgEl.textContent = message;
+  toast.classList.remove('translate-y-24', 'opacity-0');
+  toast.classList.add('translate-y-0', 'opacity-100');
+
+  setTimeout(() => {
+    toast.classList.remove('translate-y-0', 'opacity-100');
+    toast.classList.add('translate-y-24', 'opacity-0');
+  }, 3200);
+}
