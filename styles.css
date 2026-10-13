@@ -1,21 +1,32 @@
-/* Cold Hard Titanium Custom Properties */
+/* Custom Architectural Grid & Watermark Rules */
 :root {
-  --cold-void: #04060a;
-  --cold-titanium: #090d14;
-  --cold-steel: #0e1420;
-  --cold-border: #1f2b42;
-  --cold-cyan: #00f2fe;
-  --cold-ice: #38bdf8;
+  --metal-void: #07090d;
+  --metal-gunmetal: #0d1117;
+  --metal-border: #232b3b;
+  --metal-accent: #ff5500;
 }
 
-/* Subtle Vignette Shader */
-.bg-radial-vignette {
-  background: radial-gradient(circle at 50% 50%, transparent 60%, rgba(4, 6, 10, 0.85) 100%);
+/* Hairline Engineering Grid */
+.engineering-grid {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
 }
 
-/* Tactical Angular Clipped Edge */
-.clip-corner {
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+/* Giant Subdued Background Watermark Typography */
+.watermark-text {
+  position: absolute;
+  top: 15%;
+  right: -2%;
+  font-family: 'Cabinet Grotesk', 'Space Grotesk', sans-serif;
+  font-size: clamp(8rem, 20vw, 22rem);
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.015);
+  pointer-events: none;
+  z-index: 0;
+  letter-spacing: -0.05em;
 }
 
 /* Precision Scrollbars */
@@ -24,48 +35,14 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #04060a;
+  background: #07090d;
 }
 ::-webkit-scrollbar-thumb {
-  background: #152136;
-  border: 1px solid #1f2b42;
+  background: #1e2535;
+  border: 1px solid #232b3b;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00f2fe;
-}
-
-/* Reticle Corner Highlights on Console Boxes */
-.pfd-console {
-  position: relative;
-}
-.pfd-console::before {
-  content: "";
-  position: absolute;
-  top: -1px;
-  left: -1px;
-  width: 10px;
-  height: 10px;
-  border-top: 2px solid #00f2fe;
-  border-left: 2px solid #00f2fe;
-  z-index: 2;
-  pointer-events: none;
-}
-.pfd-console::after {
-  content: "";
-  position: absolute;
-  bottom: -1px;
-  right: -1px;
-  width: 10px;
-  height: 10px;
-  border-bottom: 2px solid #00f2fe;
-  border-right: 2px solid #00f2fe;
-  z-index: 2;
-  pointer-events: none;
-}
-
-/* Blueprint Shader Inversion */
-.blueprint-mode {
-  filter: invert(1) hue-rotate(180deg) contrast(1.8) saturate(2.2) brightness(0.9) !important;
+  background: #cbd5e1;
 }
 
 /* Modal Open Visibility */
