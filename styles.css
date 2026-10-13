@@ -1,27 +1,26 @@
-/* Custom Architectural Grid & Watermark Rules */
 :root {
-  --metal-void: #07090d;
-  --metal-gunmetal: #0d1117;
-  --metal-border: #232b3b;
-  --metal-accent: #ff5500;
+  --cold-void: #06080c;
+  --cold-gunmetal: #0c0f17;
+  --cold-border: #1f2738;
+  --cold-safety: #ff4d00;
 }
 
 /* Hairline Engineering Grid */
 .engineering-grid {
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
-/* Giant Subdued Background Watermark Typography */
+/* Huge Architectural Background Watermark */
 .watermark-text {
   position: absolute;
-  top: 15%;
+  top: 14%;
   right: -2%;
-  font-family: 'Cabinet Grotesk', 'Space Grotesk', sans-serif;
+  font-family: 'Cabinet Grotesk', 'Space Grotesk', 'Syne', sans-serif;
   font-size: clamp(8rem, 20vw, 22rem);
-  font-weight: 900;
+  font-weight: 800;
   line-height: 1;
   color: rgba(255, 255, 255, 0.015);
   pointer-events: none;
@@ -35,11 +34,11 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #07090d;
+  background: #06080c;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e2535;
-  border: 1px solid #232b3b;
+  background: #182030;
+  border: 1px solid #1f2738;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #cbd5e1;

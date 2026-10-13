@@ -1,3 +1,79 @@
+const canNodesData = [
+  {
+    id: "master-daq",
+    title: "NODE 01 // Master DAQ Logger",
+    controller: "ESP32 Tensilica Dual-Core (240 MHz)",
+    transceiver: "MCP2518FD + ATA6561 (CAN FD 2.0)",
+    busSpeed: "2 Mbps Data Phase / 500 kbps Arbitration",
+    sampleRate: "100 Hz Logging to High-Speed SPI SD Card",
+    hardwareSpecs: [
+      "Hardware DMA SPI bus for high-bandwidth telemetry write cycles",
+      "Dedicated FreeRTOS core 0 interrupt timer for ignition pulse counting",
+      "Integrated BLE packet sniffer for RaceBox Mini 25Hz GPS / IMU ingestion",
+      "Custom 3D-printed carbon-fiber PETG enclosure with IP65 rubber gasket seals"
+    ],
+    payloadChannels: [
+      { id: "0x100", name: "ENGINE_CVT_RPM", rate: "100 Hz", payload: "Primary RPM [uint16], Secondary RPM [uint16]" },
+      { id: "0x102", name: "CHASSIS_DYNAMICS", rate: "25 Hz", payload: "Lat_G [int16], Long_G [int16], Yaw_Rate [int16]" },
+      { id: "0x104", name: "GPS_TELEMETRY", rate: "25 Hz", payload: "Ground_Speed [uint16], Heading [uint16], Sat_Count [uint8]" }
+    ]
+  },
+  {
+    id: "suspension-node",
+    title: "NODE 02 // Front Suspension & Steering",
+    controller: "RP2040 Dual ARM Cortex-M0+",
+    transceiver: "TCAN337 CAN FD Transceiver",
+    busSpeed: "2 Mbps Data Phase",
+    sampleRate: "100 Hz Continuous ADC DMA",
+    hardwareSpecs: [
+      "Linear travel potentiometers installed on front double A-arms",
+      "Cherry Hall-effect non-contact steering column rotary sensor",
+      "Low-pass RC analog filter stage to mitigate coil EMF vibration noise",
+      "Direct chassis tab mounting with silicone isolator bushings"
+    ],
+    payloadChannels: [
+      { id: "0x200", name: "SUSPENSION_TRAVEL_FL_FR", rate: "100 Hz", payload: "Travel_FL [uint16], Travel_FR [uint16]" },
+      { id: "0x202", name: "STEERING_ANGLE", rate: "100 Hz", payload: "Steer_Angle [int16], Angular_Velocity [int16]" }
+    ]
+  },
+  {
+    id: "strain-node",
+    title: "NODE 03 // Suspension Arm Strain Gauge Hub",
+    controller: "STM32F401 BlackPill",
+    transceiver: "MCP2562FD High-Speed CAN FD",
+    busSpeed: "2 Mbps Data Phase",
+    sampleRate: "50 Hz Calibrated Strain Capture",
+    hardwareSpecs: [
+      "Custom Altium 4-layer daughterboard with precision Wheatstone bridges",
+      "INA128 low-drift instrumentation amplifiers with calibrated gain trimmer",
+      "Differential twisted shielded harness pair to suppress ignition harmonics",
+      "Thermal compensation bridge network for ambient 40°C–110°F operating conditions"
+    ],
+    payloadChannels: [
+      { id: "0x300", name: "WISHBONE_STRESS_LOWER", rate: "50 Hz", payload: "Strain_A_Arm_L [int16], Strain_A_Arm_R [int16]" },
+      { id: "0x302", name: "TIE_ROD_TENSION", rate: "50 Hz", payload: "Tie_Rod_Force_L [int16], Tie_Rod_Force_R [int16]" }
+    ]
+  },
+  {
+    id: "rear-powertrain",
+    title: "NODE 04 // Rear Powertrain & Brake Pressure",
+    controller: "ESP32-S3 Mini",
+    transceiver: "TCAN1044A CAN FD Transceiver",
+    busSpeed: "2 Mbps Data Phase",
+    sampleRate: "100 Hz Analog Pressure Capture",
+    hardwareSpecs: [
+      "Hydraulic brake line pressure transducer (0–2000 PSI)",
+      "High-temperature infrared tire and CVT belt surface temperature sensors",
+      "Deutsch DT series sealed motorsport connectors",
+      "Independent 3.3V low-dropout voltage regulation to decouple alternator spikes"
+    ],
+    payloadChannels: [
+      { id: "0x400", name: "BRAKE_PRESSURE_CVT_TEMP", rate: "100 Hz", payload: "Brake_Line_PSI [uint16], Belt_Surface_Temp [uint16]" },
+      { id: "0x402", name: "REAR_SHOCK_DISPLACEMENT", rate: "100 Hz", payload: "Travel_RL [uint16], Travel_RR [uint16]" }
+    ]
+  }
+];
+
 const projectsData = [
   {
     id: "tire-rig",
