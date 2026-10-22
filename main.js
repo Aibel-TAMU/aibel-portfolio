@@ -17,12 +17,12 @@ const PORTFOLIO_DATA = {
     name: "AIBEL JOMON",
     handle: "AIBEL.ENGINEER",
     tagline: "WHERE SILICON MEETS STEEL.",
-    headline: "Mechanical Systems, Structural Simulation & Embedded Telemetry.",
+    headline: "Mechanical Systems, Test Engineering & Embedded Systems.",
     subheadline:
       "Undergraduate Mechanical & Electrical Engineer at Texas A&M University (4.0 GPA). Designing, simulating, and validating high-reliability data acquisition architectures, suspension test rigs, and custom electromechanical hardware.",
     location: "COLLEGE STATION, TX // 30.6280° N, 96.3344° W",
     status: "AVAILABLE FOR SUMMER 2027 ROLES // TEST, CONTROLS, DYNAMICS & HARDWARE",
-    email: "aibel@tamu.edu", // Update with your preferred contact email
+    email: "ajomon@tamu.edu", // Update with your preferred contact email
     resumeUrl: "./assets/Aibel_Jomon_Resume.pdf",
     socials: {
       github: "https://github.com/",     // Add your exact GitHub username
@@ -38,20 +38,20 @@ const PORTFOLIO_DATA = {
       {
         code: "SYS.BAJA",
         label: "TAMU SAE BAJA",
-        value: "TEST ENG & '27 SUSPENSION LEAD",
-        sub: "6-Axis WFT // CAN Architecture // Shock Dyno"
+        value: "LEAD TEST ENGINEER",
+        sub: "6-Axis WFT & DAQ // Test Rigs // CAN Architecture // Dyno Development"
       },
       {
         code: "SYS.NAVAL",
         label: "NAVAL DESIGN TEAM (PEP)",
-        value: "HULL CFD/FEA & CONTROLS",
-        sub: "STAR-CCM+ Hydrodynamics // Diff-Thrust Firmware"
+        value: "HULL CFD/FEA, Testing & Validation",
+        sub: "Ansys Fluent Simulations // Diff-Thrust Firmware"
       },
       {
         code: "SYS.CORE",
         label: "PRIMARY DISCIPLINES",
         value: "DAQ // FEA // EMBEDDED // CAD",
-        sub: "ANSYS • SolidWorks • Altium • ESP-IDF • Python"
+        sub: "ANSYS • SolidWorks • Altium • C/C++ • Python • Rust"
       }
     ]
   },
@@ -69,26 +69,27 @@ const PORTFOLIO_DATA = {
       featured: true,
       status: "VALIDATED",
       date: "OCT 2026",
-      subtitle: "Michigan Scientific WFT integration, vehicle CAN bus architecture, and Python post-processing pipeline for multi-axis suspension load extraction.",
+      subtitle: "Michigan Scientific WFT integration, DAQ Casing Design, and Python post-processing pipeline for multi-axis suspension load extraction.",
       heroMetrics: [
         { label: "CHANNELS", value: "6-Axis Load + Moment" },
         { label: "BUS PROTOCOL", value: "High-Speed CAN" },
-        { label: "PIPELINE", value: "Python / PySide6" }
+        { label: "PIPELINE", value: "Python" }
       ],
-      techStack: ["CAN Bus", "Michigan Scientific WFT", "Python", "PySide6", "pyqtgraph", "pandas", "SolidWorks"],
+      techStack: ["CAN Bus", "Michigan Scientific WFT", "Python", "pyqtgraph", "pandas", "SolidWorks"],
       summary:
         "Integrated a 6-axis Wheel Force Transducer onto the Texas A&M SAE Baja vehicle to capture real-time forces (Fx, Fy, Fz) and moments (Mx, My, Mz) at the tire patch, replacing theoretical load estimates with empirical proving-ground data.",
       engineeringDeepDive: {
         problem:
           "Suspension and chassis components on off-road racing vehicles are frequently over-designed using arbitrary safety factors or under-designed due to unknown peak impact loads. Capturing true 6-DOF spindle loads during aggressive terrain events was critical to feed accurate boundary conditions into ANSYS structural simulations.",
         architecture:
-          "Designed the mechanical hub/wheel adapter assembly and integrated the Michigan Scientific 6-axis WFT into the vehicle's CAN network architecture. Configured ruggedized harness routing to survive full suspension articulation and mud/debris exposure. Built a custom Python telemetry decoding and visualization suite using pandas, PySide6, and pyqtgraph to parse raw hexadecimal CAN frames, apply scaling matrices, and synchronize force spikes with vehicle dynamics channels.",
+          "Designed the Data Aquisition System (DAQ) and integrated the Michigan Scientific 6-axis WFT into the vehicle's DAQ system. Configured ruggedized harness routing to survive full suspension articulation and mud/debris exposure. Built a custom Python telemetry decoding and visualization suite using pandas and matplotlib to parse raw hexadecimal CAN frames, apply scaling matrices, and synchronize force spikes with vehicle dynamics channels.",
         validation:
           "Executed dynamic field testing across rough terrain obstacles, successfully decoding multi-axis force and moment time-histories. The resulting empirical load cases directly govern the 2027 suspension geometry and structural FEA boundary conditions."
       },
       bom: [
         "Michigan Scientific 6-Axis Wheel Force Transducer",
-        "Custom Machined Hub & Wheel Adapter Assembly",
+        "Custom DAQ Firmware",
+        "Custom Mount Designs",
         "Twisted-Pair Shielded CAN Bus Harness (120Ω Terminated)",
         "Custom Python Post-Processing Engine (pandas / pyqtgraph / PySide6)"
       ],
