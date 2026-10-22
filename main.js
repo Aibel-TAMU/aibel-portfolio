@@ -417,7 +417,7 @@ const PORTFOLIO_DATA = {
       org: "Texas A&M SAE Baja Racing",
       badge: "Test Engineering & DAQ",
       highlights: [,
-        "Led end to end development of Pneumatic Vertical Tire Stiffness rig",
+        "Led end-to-end development of Pneumatic Vertical Tire Stiffness rig",
         "Led integration of a Michigan Scientific 6-axis Wheel Force Transducer (WFT) and built custom Python CAN bus post-processing tools.",
         "Designed and deployed a standalone ESP32 + RaceBox BLE + SD FATFS telemetry logger in under 3 weeks for CVT validation.",
         "Currently engineering a 3HP Scotch Yoke shock dynamometer backed by ANSYS structural/modal FEA.",
@@ -425,8 +425,8 @@ const PORTFOLIO_DATA = {
       ]
     },
     {
-      period: "2026 — PRESENT",
-      role: "Propulsion, CFD/FEA & Controls Engineer",
+      period: "2025 — PRESENT",
+      role: "Electronics & Analysis Engineer",
       org: "Texas A&M Naval Design Team — Promoting Electrical Propulsion (PEP)",
       badge: "HYDRODYNAMICS & FIRMWARE",
       highlights: [
