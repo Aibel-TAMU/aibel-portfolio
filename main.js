@@ -39,7 +39,7 @@ const PORTFOLIO_DATA = {
         code: "SYS.BAJA",
         label: "TAMU SAE BAJA",
         value: "LEAD TEST ENGINEER",
-        sub: "6-Axis WFT & DAQ // Test Rigs // CAN Architecture // Dyno Development"
+        sub: "DAQ // Test Rigs // CAN Architecture // Dyno Development"
       },
       {
         code: "SYS.NAVAL",
@@ -214,7 +214,7 @@ const PORTFOLIO_DATA = {
       title: "Custom 4-Layer RP2040 Macropad with Machined Aluminum Encoders",
       category: "Embedded & PCB",
       featured: false,
-      status: "VALIDATED",
+      status: "IN DEVELOPMENT",
       date: "SEP 2026",
       subtitle: "Altium Designer 4-layer PCB layout, bare-metal RP2040 implementation, lathe-turned aluminum rotary knobs, and CF-PETG enclosure.",
       heroMetrics: [
@@ -351,13 +351,12 @@ const PORTFOLIO_DATA = {
       domain: "CAD, FEA & CFD SIMULATION",
       description: "Structural load-path optimization, modal vibration isolation, and multiphase fluid dynamics.",
       tools: [
-        "SolidWorks (3D CAD / Assemblies / Weldments)",
+        "SolidWorks (3D CAD / Assemblies / Weldments / FEA)",
         "ANSYS Workbench",
         "ANSYS Static Structural",
         "ANSYS Modal (Natural Frequency / Resonance)",
         "ANSYS Fluent",
-        "Siemens STAR-CCM+ (Hydrodynamics / VOF)",
-        "GD&T & Mechanism Kinematics"
+        "Fusion360"
       ]
     },
     {
@@ -365,13 +364,15 @@ const PORTFOLIO_DATA = {
       domain: "EMBEDDED, PCB & HARDWARE",
       description: "Multi-layer board layout, bare-metal/RTOS firmware, and mixed-signal sensor conditioning.",
       tools: [
+        "Hardware-In-The-Loop Testing (HIL)",
+        "Software-In-The-Loop Testing (SIL)",
         "Altium Designer (4-Layer PCB Layout)",
         "ESP32 (ESP-IDF / FreeRTOS)",
         "STM32 (STM32 HAL)",
         "RP2040 (Dual Cortex-M0+)",
-        "C / C++ / Rust",
-        "CAN Bus Architecture (J1939 / Raw Frames)",
-        "SPI / I2C / UART / BLE / Wi-Fi UDP",
+        "C / C++ / Rust / Python",
+        "CAN Bus Architecture",
+        "SPI / I2C / UART / BLE / Wi-Fi UDP / ADC",
         "Analog Signal Conditioning (Transistor / RC Stages)"
       ]
     },
@@ -380,12 +381,13 @@ const PORTFOLIO_DATA = {
       domain: "TELEMETRY, DAQ & CONTROLS",
       description: "Real-time vehicle instrumentation, custom GUI post-processing, and dynamic system modeling.",
       tools: [
-        "Python (PySide6 / pyqtgraph / pandas / matplotlib)",
-        "MATLAB & Simulink",
+        "Python (numpy / pandas / matplotlib)",
+        "MATLAB",
         "6-Axis Wheel Force Transducer (WFT) Integration",
         "GNSS / IMU Sensor Fusion",
         "Hall Effect & Capacitive RPM Instrumentation",
-        "Differential Thrust & Dynamic Control Laws"
+        "Differential Thrust & Dynamic Controls",
+        "Wireless Telemetry"
       ]
     },
     {
@@ -394,10 +396,11 @@ const PORTFOLIO_DATA = {
       description: "Rapid composite prototyping, custom test rig manufacturing, and benchtop hardware bring-up.",
       tools: [
         "Bambu Lab X1 Carbon & A1 Mini (CF-PETG / PETG)",
-        "Manual Lathe Machining (Aluminum Hardware)",
+        "Manual Lathe Machining",
+        "Manual Mill Machining",
         "SMT & Through-Hole PCB Assembly / Rework",
         "Electrical Diagnostics & Harness Fabrication",
-        "Arch Linux Headless Server & Terminal Workflow"
+        "Linux Headless Server & Terminal Workflow"
       ]
     }
   ],
@@ -410,15 +413,15 @@ const PORTFOLIO_DATA = {
   timeline: [
     {
       period: "2026 — PRESENT",
-      role: "Test Engineer & Incoming 2027 Suspension Lead",
+      role: "Lead Test Engineer & Hardware Integration",
       org: "Texas A&M SAE Baja Racing",
-      badge: "LEADERSHIP & DAQ",
-      highlights: [
-        "Selected as incoming 2027 Suspension Lead after serving on the Controls & Test Engineering subteam.",
-        "Placed 1st overall in the team's freshman Brake Pedal Design Challenge (Spring 2026) to earn an immediate spot on the engineering roster.",
-        "Led integration of a Michigan Scientific 6-axis Wheel Force Transducer (WFT) and built custom Python/PySide6 CAN bus post-processing tools.",
+      badge: "Test Engineering & DAQ",
+      highlights: [,
+        "Led end to end development of Pneumatic Vertical Tire Stiffness rig",
+        "Led integration of a Michigan Scientific 6-axis Wheel Force Transducer (WFT) and built custom Python CAN bus post-processing tools.",
         "Designed and deployed a standalone ESP32 + RaceBox BLE + SD FATFS telemetry logger in under 3 weeks for CVT validation.",
-        "Currently engineering a 3HP Scotch Yoke shock dynamometer and a pneumatic vertical tire stiffness rig backed by ANSYS structural/modal FEA."
+        "Currently engineering a 3HP Scotch Yoke shock dynamometer backed by ANSYS structural/modal FEA.",
+        "Currently developing custom DAQ for 27' Baja car"
       ]
     },
     {
@@ -427,8 +430,9 @@ const PORTFOLIO_DATA = {
       org: "Texas A&M Naval Design Team — Promoting Electrical Propulsion (PEP)",
       badge: "HYDRODYNAMICS & FIRMWARE",
       highlights: [
-        "Conducted boat hull CFD simulations in STAR-CCM+ and structural FEA in ANSYS to minimize drag and verify structural margins.",
-        "Contributed to propeller optimization, onboard sensor suite integration, and embedded differential-thrust steering firmware."
+        "Conducted boat hull CFD simulations and structural FEA in ANSYS to minimize drag and verify structural margins.",
+        "Contributed to propeller optimization, onboard sensor suite integration, and embedded differential-thrust steering firmware.",
+        "Led hardware integration for all electronic components on the boat"
       ]
     },
     {
