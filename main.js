@@ -19,14 +19,14 @@ const PORTFOLIO_DATA = {
     tagline: "WHERE SILICON MEETS STEEL.",
     headline: "Mechanical Systems, Test Engineering & Embedded Systems.",
     subheadline:
-      "Undergraduate Mechanical & Electrical Engineer at Texas A&M University (4.0 GPA). Designing, simulating, and validating high-reliability data acquisition architectures, suspension test rigs, and custom electromechanical hardware.",
+      "Undergraduate Mechanical & Electrical Engineer at Texas A&M University (4.0 GPA). Designing, simulating, and validating high-reliability data acquisition architectures, test rigs, and custom electromechanical hardware.",
     location: "COLLEGE STATION, TX // 30.6280° N, 96.3344° W",
-    status: "AVAILABLE FOR SUMMER 2027 ROLES // TEST, CONTROLS, DYNAMICS & HARDWARE",
+    status: "AVAILABLE FOR SUMMER 2027 ROLES // TEST, CONTROLS, DYNAMICS & HARDWARE INTEGRATION",
     email: "ajomon@tamu.edu", // Update with your preferred contact email
     resumeUrl: "./assets/Aibel_Jomon_Resume.pdf",
     socials: {
-      github: "https://github.com/",     // Add your exact GitHub username
-      linkedin: "https://linkedin.com/"  // Add your exact LinkedIn handle
+      github: "https://github.com/Aibel-TAMU",     // Add your exact GitHub username
+      linkedin: "http://www.linkedin.com/in/aibel"  // Add your exact LinkedIn handle
     },
     heroSpecs: [
       {
@@ -44,14 +44,14 @@ const PORTFOLIO_DATA = {
       {
         code: "SYS.NAVAL",
         label: "NAVAL DESIGN TEAM (PEP)",
-        value: "HULL CFD/FEA, Testing & Validation",
-        sub: "Ansys Fluent Simulations // Diff-Thrust Firmware"
+        value: "Electronics & Analysis Engineer",
+        sub: "Diff-Thrust Firmware // Ansys Fluent Simulations // Electronic Component Integration"
       },
       {
         code: "SYS.CORE",
         label: "PRIMARY DISCIPLINES",
         value: "DAQ // FEA // EMBEDDED // CAD",
-        sub: "ANSYS • SolidWorks • Altium • C/C++ • Python • Rust"
+        sub: "ANSYS • SolidWorks • Fusion360 • Altium • C/C++ • Python • Rust"
       }
     ]
   },
@@ -64,7 +64,7 @@ const PORTFOLIO_DATA = {
   projects: [
     {
       id: "SYS-01",
-      title: "6-Axis Wheel Force Transducer (WFT) Integration & CAN Telemetry Suite",
+      title: "6-Axis Wheel Force Transducer (WFT) Integration & Testing Analysis",
       category: "Test & DAQ",
       featured: true,
       status: "VALIDATED",
@@ -75,14 +75,14 @@ const PORTFOLIO_DATA = {
         { label: "BUS PROTOCOL", value: "High-Speed CAN" },
         { label: "PIPELINE", value: "Python" }
       ],
-      techStack: ["CAN Bus", "Michigan Scientific WFT", "Python", "pyqtgraph", "pandas", "SolidWorks"],
+      techStack: ["CAN Bus", "Michigan Scientific WFT", "Python", "Custom DAQ", "pandas", "SolidWorks"],
       summary:
         "Integrated a 6-axis Wheel Force Transducer onto the Texas A&M SAE Baja vehicle to capture real-time forces (Fx, Fy, Fz) and moments (Mx, My, Mz) at the tire patch, replacing theoretical load estimates with empirical proving-ground data.",
       engineeringDeepDive: {
         problem:
           "Suspension and chassis components on off-road racing vehicles are frequently over-designed using arbitrary safety factors or under-designed due to unknown peak impact loads. Capturing true 6-DOF spindle loads during aggressive terrain events was critical to feed accurate boundary conditions into ANSYS structural simulations.",
         architecture:
-          "Designed the Data Aquisition System (DAQ) and integrated the Michigan Scientific 6-axis WFT into the vehicle's DAQ system. Configured ruggedized harness routing to survive full suspension articulation and mud/debris exposure. Built a custom Python telemetry decoding and visualization suite using pandas and matplotlib to parse raw hexadecimal CAN frames, apply scaling matrices, and synchronize force spikes with vehicle dynamics channels.",
+          "Designed the Data Aquisition System (DAQ) & Mounting and integrated the Michigan Scientific 6-axis WFT into the vehicle's DAQ system. Configured ruggedized harness routing to survive full suspension articulation and mud/debris exposure. Built a custom Python telemetry decoding and visualization suite using pandas and matplotlib to parse raw hexadecimal CAN frames, apply scaling matrices, and synchronize force spikes with vehicle dynamics channels.",
         validation:
           "Executed dynamic field testing across rough terrain obstacles, successfully decoding multi-axis force and moment time-histories. The resulting empirical load cases directly govern the 2027 suspension geometry and structural FEA boundary conditions."
       },
@@ -113,12 +113,12 @@ const PORTFOLIO_DATA = {
 
     {
       id: "SYS-02",
-      title: "Standalone Multi-Sensor Vehicle DAQ & CVT Validation System",
+      title: "Accelerated Multi-Sensor Vehicle DAQ & CVT Validation System",
       category: "Test & DAQ",
       featured: true,
       status: "VALIDATED",
       date: "SEP 2026",
-      subtitle: "End-to-end ESP32 telemetry logger combining Hall-effect RPM pulse counters, custom capacitive spark pickup, RaceBox Mini GNSS/IMU over BLE, and FATFS SD logging.",
+      subtitle: "End-to-end ESP32 telemetry logger combining Hall-effect RPM pulse counters, capacitive spark pickup, RaceBox Mini GNSS/IMU over BLE, and FATFS SD logging.",
       heroMetrics: [
         { label: "DEV CYCLE", value: "< 3 Weeks" },
         { label: "TELEMETRY", value: "25Hz GNSS + IMU + RPM" },
@@ -126,18 +126,18 @@ const PORTFOLIO_DATA = {
       ],
       techStack: ["ESP32", "ESP-IDF (C)", "FreeRTOS", "BLE", "SPI / FATFS", "2N3904 Analog Front-End", "Python"],
       summary:
-        "Architected, fabricated, and validated a complete standalone data acquisition system from scratch in under three weeks to characterize Continuously Variable Transmission (CVT) shift curves and vehicle acceleration performance.",
+        "Architected, fabricated, and validated a complete standalone data acquisition system from scratch in under three weeks to characterize Continuously Variable Transmission (CVT) shift curves and vehicle acceleration performance to help the transmission team with their CVT design.",
       engineeringDeepDive: {
         problem:
-          "Tuning a CVT requires simultaneous, time-synchronized logging of engine RPM (primary sheave), gearbox RPM (secondary sheave), longitudinal acceleration, and GPS velocity. Commercial motorsports loggers were cost-prohibitive and lacked native integration with our existing sensors.",
+          "Tuning a custom mechanical CVT requires simultaneous, time-synchronized logging of engine RPM (primary sheave), gearbox RPM (secondary sheave), longitudinal acceleration, and GPS velocity. Commercial motorsports loggers were cost-prohibitive and lacked native integration with our existing sensors.",
         architecture:
-          "Built a dual-core ESP32 acquisition system in C (ESP-IDF). Engineered a custom capacitive spark plug pickup circuit using a 2N3904 NPN transistor stage and RC low-pass filtering to cleanly condition noisy high-voltage ignition pulses into 3.3V logic edges for engine RPM. Interfaced gear-tooth Hall effect sensors via hardware pulse counters (PCNT) for secondary shaft speed, implemented a Bluetooth Low Energy (BLE) client stack to stream 25Hz GNSS + IMU packets from a RaceBox Mini, and wrote non-blocking ring-buffered data streams to an SD card over SPI using FATFS.",
+          "Built a dual-core ESP32 acquisition system in C (ESP-IDF). Interfaced gear-tooth Hall effect sensors via hardware pulse counters (PCNT) for secondary shaft rpm and Capacitive Inductive sensors for primary shaft rpm, implemented a Bluetooth Low Energy (BLE) client stack to capture 25Hz GNSS + IMU packets from a RaceBox Mini, and wrote non-blocking ring-buffered data streams to an SD card over SPI using FATFS.",
         validation:
-          "Validated on-vehicle during dynamic CVT shift sweeps. Plotted primary vs. secondary RPM engagement curves alongside longitudinal G-force profiles in Python, enabling precise flyweight and spring calibration."
+          "Validated on-vehicle during dynamic CVT shift sweeps. Plotted primary vs. secondary RPM engagement curves alongside longitudinal G-force profiles in Python, enabling accurate acceleration model tuning and driving design for 2027 custom mechanical CVT."
       },
       bom: [
         "ESP32 Dual-Core MCU (ESP-IDF FreeRTOS Task Architecture)",
-        "Custom 2N3904 NPN Transistor + RC Filter Capacitive Spark Pickup Circuit",
+        "OEM Capacitive Inductive Sensor",
         "Ferrous Gear-Tooth Hall Effect Speed Sensors",
         "RaceBox Mini 25Hz GNSS / 6-Axis IMU (BLE GATT Stream)",
         "SPI MicroSD Card Interface (FATFS Binary/CSV Logging)"
